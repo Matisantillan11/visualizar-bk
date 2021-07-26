@@ -1,0 +1,41 @@
+{
+  "name": "visualizar-bk",
+  "version": "0.0.1",
+  "description": "Backend to Visualizar app. An Mobile app with augmented reality ",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node src/server/server.js",
+    "dev": "nodemon --exec npm run serve"
+  },
+  "keywords": [
+    "AR",
+    "augmented",
+    "reality",
+    "react",
+    "native",
+    "node",
+    "express",
+    "firebase"
+  ],
+  "author": "@matisantillan11",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/node": "^7.14.7",
+    "@babel/plugin-transform-runtime": "^7.14.5",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.2",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.31.0",
+    "eslint-plugin-import": "^2.23.4",
+    "nodemon": "^2.0.12",
+    "webpack": "^5.46.0",
+    "webpack-dev-middleware": "^5.0.0",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-livereload-plugin": "^3.0.1",
+    "wepack-cli": "^0.0.1-security"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
