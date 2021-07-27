@@ -1,20 +1,19 @@
 const express = require("express");
-require("dotenv").config("/.env");
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
 
 /*Initialzing packages*/
 const app = express();
+const router = require("../network/routes.js");
 
 /*setting server */
+dotenv.config("/.env");
+
 app.set("port", process.env.PORT || 3001);
+app.use(express.json());
 
 /* routes */
-app.get("/", (req, res) => {
-  res.send("Hello from GET");
-});
-
-app.get("/api", (req, res) => {
-  res.json({ api: "works!" });
-});
+router(app);
 
 /*starting server */
 app.listen(app.get("port"), () =>
