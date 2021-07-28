@@ -1,14 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+
 const dotenv = require("dotenv");
+dotenv.config("/.env");
 
 /*Initialzing packages*/
-const app = express();
 const router = require("../network/routes.js");
 
 /*setting server */
-dotenv.config("/.env");
-
+const app = express();
 app.set("port", process.env.PORT || 3001);
 app.use(express.json());
 
