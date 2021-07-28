@@ -37,7 +37,12 @@ const getBooks = async (bookID) => {
   }
 };
 
+const updateBook = async (bookID, book) => {
+  await db.ref("books").child(bookID).update(book);
+};
+
 module.exports = {
   add: addBook,
   list: getBooks,
+  update: updateBook,
 };
