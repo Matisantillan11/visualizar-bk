@@ -13,14 +13,29 @@ firebase.initializeApp({
 const db = firebase.database();
 
 router.get("/books", (req, res) => {
-  res.json(books);
+  const books = [];
+  db.ref("books").on("value", (snapshot) => {
+    res.send(books.concat(snapshot.val()));
+  });
 });
 
 router.get("/books/:id", (req, res) => {
   const { id } = req.params;
-  const book = books.find((book) => book.id === Number(id));
 
-  res.json(book);
+  db.ref("books")
+    .child(id)
+    .get()
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const book = snapshot.val();
+        res.send(book);
+      } else {
+        res.status(404);
+      }
+    })
+    .catch((err) => {
+      console.error("[error fetching by id] " + err);
+    });
 });
 
 router.post("/books/create", (req, res) => {
@@ -30,7 +45,7 @@ router.post("/books/create", (req, res) => {
     release_date: req.body.release_date,
   };
   db.ref("books").push(book);
-  res.status(204).json(book);
+  res.status(200).json(book);
 });
 
 module.exports = router;
