@@ -1,7 +1,9 @@
+const serviceAccount = require("../../visualizar-app-firebase-adminsdk.json");
+
 const connectToDatabase = async (firebase) => {
   await firebase.initializeApp({
-    credential: firebase.credential.applicationDefault(),
-    databaseURL: "https://visualizar-app-default-rtdb.firebaseio.com/",
+    credential: firebase.credential.cert(serviceAccount),
+    databaseURL: process.env.DBURL,
   });
   console.log("[connected] firebase is connected successfully");
 };
