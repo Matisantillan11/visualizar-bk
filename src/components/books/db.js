@@ -12,23 +12,20 @@ const addBook = (book) => {
 const getBooks = async (bookID) => {
   let book = {};
   if (bookID !== undefined) {
-    console.log("entre!");
     await db
       .ref("books")
       .child(bookID)
       .get()
       .then((snapshot) => {
         if (snapshot.exists()) {
-          console.log(snapshot.val());
           book = snapshot.val();
-          return book;
         }
       })
       .catch((err) => {
         console.error("[error fetching by id] " + err);
       });
+    return book;
   } else {
-    console.log(" no entre!");
     let books = [];
     await db
       .ref("books")
@@ -41,6 +38,6 @@ const getBooks = async (bookID) => {
 };
 
 module.exports = {
-  addBook,
-  getBooks,
+  add: addBook,
+  list: getBooks,
 };
