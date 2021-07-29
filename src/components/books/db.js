@@ -6,7 +6,7 @@ connectToDatabase(firebase);
 const db = firebase.database();
 
 const addBook = (book) => {
-  db.ref("books").set(book);
+  db.ref("books").push(book);
 };
 
 const getBooks = async (bookID) => {

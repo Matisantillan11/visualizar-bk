@@ -1,7 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const { addUser } = require("./controller.js");
+const { addUser, listUser } = require("./controller.js");
+
+router.get("/users", async (req, res) => {
+  await listUser()
+    .then((users) => res.status(200).send(users))
+    .catch((error) => res.status(404).send("Error: " + error));
+});
+
 router.post("/users", async (req, res) => {
   const user = {
     firstname: req.body.firstname,

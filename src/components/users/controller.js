@@ -1,4 +1,4 @@
-const { add } = require("./db");
+const { add, list } = require("./db");
 
 const addUser = (user) => {
   return new Promise((res, rej) => {
@@ -11,6 +11,16 @@ const addUser = (user) => {
   });
 };
 
+const listUser = (userID) => {
+  return new Promise((res, rej) => {
+    if (!userID) {
+      res(list());
+    } else {
+      res(list(userID));
+    }
+  });
+};
 module.exports = {
   addUser,
+  listUser,
 };
