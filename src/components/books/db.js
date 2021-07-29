@@ -41,8 +41,13 @@ const updateBook = async (bookID, book) => {
   await db.ref("books").child(bookID).update(book);
 };
 
+const deleteBook = (bookID) => {
+  db.ref("books").child(bookID).remove();
+};
+
 module.exports = {
   add: addBook,
   list: getBooks,
   update: updateBook,
+  disable: deleteBook,
 };

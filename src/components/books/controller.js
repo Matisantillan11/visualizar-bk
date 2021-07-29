@@ -1,4 +1,4 @@
-const { add, list, update } = require("./db");
+const { add, list, update, disable } = require("./db");
 
 const addBook = (book) => {
   return new Promise((res, rej) => {
@@ -41,8 +41,20 @@ const updateBook = (bookID, book) => {
   });
 };
 
+const deleteBook = (bookID) => {
+  return new Promise((res, rej) => {
+    if (!bookID) {
+      console.error("[Error updating books] Invalid request");
+      rej("Invalid request");
+    } else {
+      res(disable(bookID));
+    }
+  });
+};
+
 module.exports = {
   addBook,
   listBooks,
   updateBook,
+  deleteBook,
 };
