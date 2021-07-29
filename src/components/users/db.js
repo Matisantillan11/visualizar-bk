@@ -21,7 +21,8 @@ const getUser = async (userID) => {
       });
     return users;
   } else {
-    let user = {};
+    console.log("entre!");
+
     await db
       .ref("users")
       .child(userID)
@@ -30,11 +31,12 @@ const getUser = async (userID) => {
         if (snapshot.exists()) {
           user = snapshot.val();
         }
-        return user;
       })
       .catch((err) => {
         console.error("[error fetching by id] " + err);
       });
+
+    return user;
   }
 };
 

@@ -9,6 +9,13 @@ router.get("/users", async (req, res) => {
     .catch((error) => res.status(404).send("Error: " + error));
 });
 
+router.get("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  await listUser(id)
+    .then((user) => res.status(200).send(user))
+    .catch((error) => res.status(404).send("Error: " + error));
+});
+
 router.post("/users", async (req, res) => {
   const user = {
     firstname: req.body.firstname,

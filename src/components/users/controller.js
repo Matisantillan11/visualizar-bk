@@ -18,6 +18,8 @@ const listUser = (userID) => {
     } else {
       res(list(userID));
     }
+
+    rej("[error controller] list user");
   });
 };
 module.exports = {
