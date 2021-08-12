@@ -1,4 +1,4 @@
-const serviceAccount = require("../../VisualizAR-app-firebase-adminsdk.json");
+const serviceAccount = require("../../visualizar-app-firebase-adminsdk.json");
 
 const connectToDatabase = async (firebase) => {
   await firebase.initializeApp({

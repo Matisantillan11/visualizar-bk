@@ -21,7 +21,6 @@ const getUser = async (userID) => {
       });
     return users;
   } else {
-    console.log("entre!");
 
     await db
       .ref("users")
@@ -38,9 +37,20 @@ const getUser = async (userID) => {
 
     return user;
   }
+
+};
+
+const updateUser = async (userID, user) => {
+  await db.ref("users").child(userID).update(user);
+};
+
+const deleteUser = (userID) => {
+  db.ref("users").child(userID).remove();
 };
 
 module.exports = {
   add: createUser,
   list: getUser,
+  update: updateUser,
+  remove: deleteUser,
 };

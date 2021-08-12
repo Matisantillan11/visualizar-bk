@@ -1,4 +1,4 @@
-const { add, list } = require("./db");
+const { add, list, update, remove } = require("./db");
 
 const addUser = (user) => {
   return new Promise((res, rej) => {
@@ -22,7 +22,33 @@ const listUser = (userID) => {
     rej("[error controller] list user");
   });
 };
+
+
+const updateUser = (userID, user ) => {
+  return new Promise((res, rej) => {
+    if (!userID || user){
+      rej("[error controller] update user");
+    } else {
+      res(update(userID, user));
+    }
+  })
+};
+
+const deleteUser = (userID) =>{
+  return new Promise((res, rej) => {
+    if(!userID){
+      rej("[error controller] delete user")
+    }else{
+      res(remove(userID));
+    }
+  })
+  
+};
+
+
 module.exports = {
   addUser,
   listUser,
+  updateUser,
+  deleteUser
 };

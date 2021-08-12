@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { addUser, listUser } = require("./controller.js");
+const { addUser, listUser, updateUser } = require("./controller.js");
 
 router.get("/", async (req, res) => {
   await listUser()
@@ -29,5 +29,23 @@ router.post("/create", async (req, res) => {
     .then(() => res.status(200).send(user))
     .catch((error) => console.log("Error: " + error));
 });
+
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  
+  const user = {
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    email: req.body.email,
+    username: req.body.username,
+    secret: req.body.secret,
+  };
+
+  await updateUser(id, user)
+    .then(res.status(200).send(user))
+    .catch((error) => console.error("Error: " + error));
+});
+
+
 
 module.exports = router;
