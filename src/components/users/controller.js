@@ -23,32 +23,29 @@ const listUser = (userID) => {
   });
 };
 
-
-const updateUser = (userID, user ) => {
+const updateUser = (userID, user) => {
   return new Promise((res, rej) => {
-    if (!userID || user){
+    if (!userID || user) {
       rej("[error controller] update user");
     } else {
       res(update(userID, user));
     }
-  })
+  });
 };
 
-const deleteUser = (userID) =>{
+const deleteUser = (userID) => {
   return new Promise((res, rej) => {
-    if(!userID){
-      rej("[error controller] delete user")
-    }else{
+    if (!userID) {
+      rej("[error controller] delete user");
+    } else {
       res(remove(userID));
     }
-  })
-  
+  });
 };
-
 
 module.exports = {
   addUser,
   listUser,
   updateUser,
-  deleteUser
+  deleteUser,
 };

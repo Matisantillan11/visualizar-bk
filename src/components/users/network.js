@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { addUser, listUser, updateUser } = require("./controller.js");
+const {
+  addUser,
+  listUser,
+  updateUser,
+  deleteUser,
+} = require("./controller.js");
 
 router.get("/", async (req, res) => {
   await listUser()
@@ -32,7 +37,7 @@ router.post("/create", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  
+
   const user = {
     firstname: req.body.firstname,
     lastname: req.body.lastname,
@@ -46,6 +51,11 @@ router.put("/:id", async (req, res) => {
     .catch((error) => console.error("Error: " + error));
 });
 
-
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  await deleteUser(id)
+    .then(res.status(200).send("deleted"))
+    .catch((error) => console.error("Error: " + error));
+});
 
 module.exports = router;
