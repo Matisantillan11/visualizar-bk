@@ -3,7 +3,7 @@ const firebaseAdmin = require('firebase-admin')
 const defaultApp = require('../visualizar-app-firebase-adminsdk.json')
 
 firebaseAdmin.initializeApp({
-	credential: firebaseAdmin.credential.applicationDefault(defaultApp),
+	credential: firebaseAdmin.credential.cert(defaultApp),
 	databaseURL: process.env.DB_URL,
 })
 

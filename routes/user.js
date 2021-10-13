@@ -1,4 +1,5 @@
 const { Router, response, request } = require('express')
+const { postUser } = require('../controllers/user')
 
 const router = Router()
 
@@ -9,12 +10,7 @@ router.get('/', (req = request, res = response) => {
 	})
 })
 
-router.post('/', (req = request, res = response) => {
-	res.json({
-		status: 201,
-		message: 'POST - Users',
-	})
-})
+router.post('/', postUser)
 
 router.put('/', (req = request, res = response) => {
 	res.json({
