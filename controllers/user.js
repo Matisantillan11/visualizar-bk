@@ -59,4 +59,36 @@ const postUser = async (req = request, res = response) => {
 	}
 }
 
-module.exports = { getUser, postUser }
+const putUser = async (req = request, res = response) => {
+	try {
+		const idUser = req.params.id
+		const { fullname, dni, email } = req.body
+		const user = {
+			fullname,
+			dni,
+			email,
+		}
+
+		const userResponse = await firebase.database().ref('users').child(idUser)
+
+		const updated = userResponse.on('value', async (snapshot) => {
+			if (snapshot.val() !== null) {
+				await userResponse.update(user)
+				return true
+			} else {
+				return false
+			}
+		})
+
+		console.log(updated)
+		if (updated) {
+			res.status(200).json(user)
+		} else {
+			res.status(404).end()
+		}
+	} catch (error) {
+		res.status(500).json(error.message)
+	}
+}
+
+module.exports = { getUser, postUser, putUser }

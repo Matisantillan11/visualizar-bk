@@ -1,6 +1,6 @@
 const { Router, response, request } = require('express')
 const { check } = require('express-validator')
-const { postUser, getUser } = require('../controllers/user')
+const { postUser, getUser, putUser } = require('../controllers/user')
 const validateEntries = require('../middlewares/validateEntries')
 
 const router = Router()
@@ -26,12 +26,7 @@ router.post(
 	postUser,
 )
 
-router.put('/', (req = request, res = response) => {
-	res.json({
-		status: 200,
-		message: 'PUT - Users',
-	})
-})
+router.put('/:id', putUser)
 
 router.delete('/', (req = request, res = response) => {
 	res.json({
