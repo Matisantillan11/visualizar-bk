@@ -1,16 +1,11 @@
 const { Router, response, request } = require('express')
 const { check } = require('express-validator')
-const { postUser } = require('../controllers/user')
+const { postUser, getUser } = require('../controllers/user')
 const validateEntries = require('../middlewares/validateEntries')
 
 const router = Router()
 
-router.get('/', (req = request, res = response) => {
-	res.json({
-		status: 200,
-		message: 'GET - Users',
-	})
-})
+router.get('/', getUser)
 
 router.post(
 	'/',
