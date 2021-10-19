@@ -59,33 +59,25 @@ const postUser = async (req = request, res = response) => {
 	}
 }
 
-const putUser = async (req = request, res = response) => {
+const putUser = async (req = request, res = response, next = next) => {
+	const idUser = req.params.id
+	const { fullname, dni, email } = req.body
+	const user = {
+		fullname,
+		dni,
+		email,
+	}
+
 	try {
-		const idUser = req.params.id
-		const { fullname, dni, email } = req.body
-		const user = {
-			fullname,
-			dni,
-			email,
-		}
-
-		const userResponse = await firebase.database().ref('users').child(idUser)
-
-		const updated = userResponse.on('value', async (snapshot) => {
+		const userResponse = firebase.database().ref(`users/${idUser}`)
+		userResponse.once('value', (snapshot) => {
 			if (snapshot.val() !== null) {
-				await userResponse.update(user)
-				return true
+				userResponse.update(user)
+				res.status(200).json(user)
 			} else {
-				return false
+				res.status(404).end()
 			}
 		})
-
-		console.log(updated)
-		if (updated) {
-			res.status(200).json(user)
-		} else {
-			res.status(404).end()
-		}
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
