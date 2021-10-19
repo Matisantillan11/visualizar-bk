@@ -21,8 +21,10 @@ const getUser = async (req = request, res = response) => {
 			userRef = await db.ref(`users`)
 			userRef.on('value', (snapshot) => {
 				snapshot.forEach((childSnapshot) => {
-					let { dni, email, fullname, role, school } = childSnapshot.val()
+					let { dni, email, fullname, role, school, active } =
+						childSnapshot.val()
 					let id = childSnapshot.key
+
 					user.push({ id, dni, email, fullname, role, school })
 				})
 
@@ -47,6 +49,7 @@ const postUser = async (req = request, res = response) => {
 			role,
 			email,
 			school,
+			active: false,
 			password: hashedPassword,
 		}
 
@@ -83,4 +86,22 @@ const putUser = async (req = request, res = response, next = next) => {
 	}
 }
 
-module.exports = { getUser, postUser, putUser }
+const deleteUser = (req = request, res = response) => {
+	const idUser = req.params.id
+
+	try {
+		const userResponse = firebase.database().ref(`users/${idUser}`)
+		userResponse.once('value', (snapshot) => {
+			if (snapshot.val() !== null) {
+				userResponse.remove()
+				res.status(200).json({ message: 'User deleted successfully' })
+			} else {
+				res.status(404).end()
+			}
+		})
+	} catch (error) {
+		res.status(500).json(error.message)
+	}
+}
+
+module.exports = { getUser, postUser, putUser, deleteUser }

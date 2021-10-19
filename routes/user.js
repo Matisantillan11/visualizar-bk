@@ -1,6 +1,11 @@
 const { Router, response, request } = require('express')
 const { check } = require('express-validator')
-const { postUser, getUser, putUser } = require('../controllers/user')
+const {
+	postUser,
+	getUser,
+	putUser,
+	deleteUser,
+} = require('../controllers/user')
 const validateEntries = require('../middlewares/validateEntries')
 
 const router = Router()
@@ -28,11 +33,6 @@ router.post(
 
 router.put('/:id', putUser)
 
-router.delete('/', (req = request, res = response) => {
-	res.json({
-		status: 200,
-		message: 'DELETE - Users',
-	})
-})
+router.delete('/:id', deleteUser)
 
 module.exports = router
