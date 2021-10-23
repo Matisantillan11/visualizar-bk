@@ -93,7 +93,7 @@ const deleteUser = (req = request, res = response) => {
 		const userResponse = firebase.database().ref(`users/${idUser}`)
 		userResponse.once('value', (snapshot) => {
 			if (snapshot.val() !== null) {
-				userResponse.remove()
+				userResponse.update({ active: false })
 				res.status(200).json({ message: 'User deleted successfully' })
 			} else {
 				res.status(404).end()
