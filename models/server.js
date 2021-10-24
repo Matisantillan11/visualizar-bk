@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const user = require('../routes/user')
 const auth = require('../routes/auth')
+const book = require('../routes/book')
 const { connectToDatabase } = require('../database/config')
 class Server {
 	constructor() {
@@ -9,6 +10,7 @@ class Server {
 		this.port = process.env.PORT || 3001
 		this.userRoute = '/api/users'
 		this.authRoute = '/api/auth'
+		this.bookRoute = '/api/books'
 
 		this.middlewares()
 
@@ -29,6 +31,7 @@ class Server {
 	routes() {
 		this.app.use(this.userRoute, user)
 		this.app.use(this.authRoute, auth)
+		this.app.use(this.bookRoute, book)
 	}
 
 	listen() {
