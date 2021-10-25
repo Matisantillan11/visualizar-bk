@@ -49,22 +49,32 @@ const postBook = async (req = request, res = response) => {
 	try {
 		const bookRef = firebase.database().ref().child('books')
 		const { name, editorial, course, teacher, author } = req.body
+		const { cover } = req.files
 
-		const book = {
-			name,
-			editorial,
-			course,
-			teacher,
-			author,
-			active: true,
-		}
+		const storageRef = firebase.storage().bucket(process.env.STORAGE_BUCKET)
+		storageRef
+			.upload(cover.tempFilePath, {
+				destination: `/files/books/${cover.name}`,
+			})
+			.then((file) => {
+				let book = {
+					name,
+					editorial,
+					course,
+					teacher,
+					author,
+					cover: file[0].metadata.name,
+					active: true,
+				}
 
-		await bookRef.push(book)
+				bookRef.push(book)
 
-		return res.status(201).send(book)
-	} catch (error) {
-		return res.status(500).json(error.message)
-	}
+				return res.status(201).send(book)
+			})
+			.catch((error) => {
+				return res.status(500).json(error.message)
+			})
+	} catch (error) {}
 }
 
 module.exports = { getBook, postBook }

@@ -5,6 +5,7 @@ const defaultApp = require('../visualizar-app-firebase-adminsdk.json')
 firebaseAdmin.initializeApp({
 	credential: firebaseAdmin.credential.cert(defaultApp),
 	databaseURL: process.env.DB_URL,
+	storageBucket: process.env.STORAGE_BUCKET,
 })
 
 const connectToDatabase = async () => {

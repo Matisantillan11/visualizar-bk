@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const fileUpload = require('express-fileupload')
 const user = require('../routes/user')
 const auth = require('../routes/auth')
 const book = require('../routes/book')
@@ -22,6 +23,12 @@ class Server {
 	middlewares() {
 		this.app.use(cors())
 		this.app.use(express.json())
+		this.app.use(
+			fileUpload({
+				useTempFiles: true,
+				tempFileDir: '/tmp/',
+			}),
+		)
 	}
 
 	async database() {
