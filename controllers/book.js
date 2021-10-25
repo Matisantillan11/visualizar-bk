@@ -4,9 +4,11 @@ const firebase = require('firebase-admin')
 const getBook = async (req = request, res = response) => {
 	try {
 		const db = firebase.database()
+		const storageRef = firebase.storage().bucket(process.env.STORAGE_BUCKET)
 		let bookRef
 		const idBook = req.query.id
 		let books = []
+
 		if (idBook) {
 			bookRef = db.ref(`books/${idBook}`)
 			bookRef.on('value', (snapshot) => {
@@ -21,6 +23,7 @@ const getBook = async (req = request, res = response) => {
 					course,
 					teacher,
 					author,
+					cover,
 					active,
 				}
 				return res.status(200).json({ book: completeBook })
@@ -28,17 +31,25 @@ const getBook = async (req = request, res = response) => {
 		} else {
 			bookRef = await db.ref(`books`)
 			bookRef.on('value', (snapshot) => {
-				snapshot.forEach((childSnapshot) => {
-					const { name, editorial, course, teacher, author, active } =
+				snapshot.forEach(async (childSnapshot) => {
+					const { name, editorial, course, teacher, cover, author, active } =
 						childSnapshot.val()
 
 					let id = childSnapshot.key
 
-					books.push({ id, name, editorial, course, teacher, author, active })
+					books.push({
+						id,
+						name,
+						editorial,
+						course,
+						teacher,
+						author,
+						cover: url.toString('base64'),
+						active,
+					})
 				})
-
-				return res.status(200).json({ books })
 			})
+			return res.status(200).json({ books })
 		}
 	} catch (error) {
 		return res.status(500).json(error.message)
@@ -48,33 +59,31 @@ const getBook = async (req = request, res = response) => {
 const postBook = async (req = request, res = response) => {
 	try {
 		const bookRef = firebase.database().ref().child('books')
+		const storageRef = firebase.storage().bucket(process.env.STORAGE_BUCKET)
 		const { name, editorial, course, teacher, author } = req.body
 		const { cover } = req.files
 
-		const storageRef = firebase.storage().bucket(process.env.STORAGE_BUCKET)
-		storageRef
-			.upload(cover.tempFilePath, {
-				destination: `/files/books/${cover.name}`,
-			})
-			.then((file) => {
-				let book = {
-					name,
-					editorial,
-					course,
-					teacher,
-					author,
-					cover: file[0].metadata.name,
-					active: true,
-				}
+		const uploadResponse = await storageRef.upload(cover.tempFilePath, {
+			destination: `files/books/${cover.name}`,
+		})
 
-				bookRef.push(book)
+		let book = {
+			name,
+			editorial,
+			course,
+			teacher,
+			author,
+			cover: cover.name,
+			active: true,
+		}
 
-				return res.status(201).send(book)
-			})
-			.catch((error) => {
-				return res.status(500).json(error.message)
-			})
-	} catch (error) {}
+		bookRef.push(book)
+
+		return res.status(201).send(book)
+	} catch (error) {
+		console.error(error)
+		return res.status(500).send('No se pudo crear el libro.')
+	}
 }
 
 module.exports = { getBook, postBook }
