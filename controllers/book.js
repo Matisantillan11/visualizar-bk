@@ -4,15 +4,13 @@ const firebase = require('firebase-admin')
 const getBook = async (req = request, res = response) => {
 	try {
 		const db = firebase.database()
-		const storageRef = firebase.storage().bucket(process.env.STORAGE_BUCKET)
 		let bookRef
 		const idBook = req.query.id
 		let books = []
-
 		if (idBook) {
 			bookRef = db.ref(`books/${idBook}`)
 			bookRef.on('value', (snapshot) => {
-				const { name, editorial, course, teacher, author, active } =
+				const { name, editorial, course, teacher, author, cover, active } =
 					snapshot.val()
 				const id = snapshot.key
 
@@ -31,28 +29,21 @@ const getBook = async (req = request, res = response) => {
 		} else {
 			bookRef = await db.ref(`books`)
 			bookRef.on('value', (snapshot) => {
-				snapshot.forEach(async (childSnapshot) => {
-					const { name, editorial, course, teacher, cover, author, active } =
+				snapshot.forEach((childSnapshot) => {
+					const { name, editorial, course, teacher, author, cover, active } =
 						childSnapshot.val()
 
 					let id = childSnapshot.key
 
-					books.push({
-						id,
-						name,
-						editorial,
-						course,
-						teacher,
-						author,
-						cover: url.toString('base64'),
-						active,
-					})
+					books.push({ id, name, editorial, course, teacher, author, cover,  active })
 				})
+
+				return res.status(200).json({ books })
 			})
-			return res.status(200).json({ books })
 		}
 	} catch (error) {
-		return res.status(500).json(error.message)
+		console.log(error)
+		throw new Error("No se pudieron obtener los libros")
 	}
 }
 
@@ -73,7 +64,7 @@ const postBook = async (req = request, res = response) => {
 			course,
 			teacher,
 			author,
-			cover: cover.name,
+			cover: uploadResponse[0].metadata.name,
 			active: true,
 		}
 
