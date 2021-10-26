@@ -4,7 +4,7 @@
   "description": "Backend to Visualizar app. An Mobile app with augmented reality ",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server/server.js",
+    "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "keywords": [
