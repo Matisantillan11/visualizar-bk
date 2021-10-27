@@ -1,41 +1,44 @@
-const { compare, compareSync } = require('bcrypt')
+const { compare } = require('bcrypt')
 const { response, request } = require('express')
-const firebase = require('firebase-admin')
 const generateJWT = require('../helpers/generateJWT')
+const User = require('../models/user')
 
 const loginUser = async (req = request, res = response) => {
 	try {
-		let user = req.body
+		let { email, password } = req.body
 
-		const userResponse = await firebase.database().ref(`users`)
-		userResponse.on('value', async (snapshot) => {
-			let canLogin = false
-			let id = 0
-			snapshot.forEach((childSnapshot) => {
-				let { email, password, active } = childSnapshot.val()
 
-				//email existe
-				if (user.email === email) {
-					//validacion de contraseña
-					const correctPassword = compareSync(user.password, password)
-					//usuario activo
-					if (correctPassword && active) {
-						canLogin = true
-						id = childSnapshot.key
-						user = childSnapshot.val()
-					}
+		const user = await User.findOne({ email })
+
+		if(user){
+			const correctPassword = await compare( password, user.password)
+			if(correctPassword){
+				if(user.active){
+					canLogin = true
+					const token = await generateJWT(user._id)
+					delete user.password
+					return res.status(200).json({ user, token, msg: 'Logged successfully' })
+				}else{
+					return res.status(401).json({
+						code: 401,
+						message: 'Your account is not active. Please contact your admin.'
+					})
 				}
-			})
-
-			if (canLogin === false) {
-				return res.status(400).json({ message: 'Wrong credentials!!' })
-			} else {
-				//generar jwt
-				delete user.password
-				const token = await generateJWT(id)
-				return res.status(200).json({ token, user, msg: 'Logged successfully' })
+				
+			} else{
+				return res.status(401).json({
+					code: 401,
+					message: 'Cannot validate your credentials. Please try again'
+				})
 			}
-		})
+		} else {
+			return res.status(401).json({
+				code: 401,
+				message: 'Cannot validate your credentials. Please try again'
+			})
+		}
+
+		
 	} catch (error) {
 		console.error({ error })
 		return res.json({
