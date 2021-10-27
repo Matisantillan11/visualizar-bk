@@ -1,8 +1,7 @@
 const { request, response } = require('express')
 const bcrypt = require('bcrypt')
-const firebase = require('firebase-admin')
 const User = require('../models/user')
-const { findById } = require('../models/user')
+
 
 
 const getUser = async (req = request, res = response) => {

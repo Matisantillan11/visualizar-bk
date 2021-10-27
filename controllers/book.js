@@ -1,80 +1,60 @@
 const { request, response } = require('express')
-const firebase = require('firebase-admin')
-
+const path = require('path')
+const Book = require('../models/book')
 const getBook = async (req = request, res = response) => {
+		
 	try {
-		const db = firebase.database()
-		let bookRef
-		const idBook = req.query.id
-		let books = []
-		if (idBook) {
-			bookRef = db.ref(`books/${idBook}`)
-			bookRef.on('value', (snapshot) => {
-				const { name, editorial, course, teacher, author, cover, active } =
-					snapshot.val()
-				const id = snapshot.key
+	const idUBook = req.query.id
+	let book
 
-				let completeBook = {
-					id,
-					name,
-					editorial,
-					course,
-					teacher,
-					author,
-					cover,
-					active,
-				}
-				return res.status(200).json({ book: completeBook })
-			})
-		} else {
-			bookRef = await db.ref(`books`)
-			bookRef.on('value', (snapshot) => {
-				snapshot.forEach((childSnapshot) => {
-					const { name, editorial, course, teacher, author, cover, active } =
-						childSnapshot.val()
-
-					let id = childSnapshot.key
-
-					books.push({ id, name, editorial, course, teacher, author, cover,  active })
-				})
-
-				return res.status(200).json({ books })
-			})
-		}
-	} catch (error) {
-		console.log(error)
-		throw new Error("No se pudieron obtener los libros")
+	if (idUBook) {
+		book = await Book.findById(idUBook)	
+	} else {
+		book = await Book.find()
+		
 	}
+
+	return res.status(200).json({ books: book })
+	} catch (error) {
+		console.error(error.message)
+		return res.status(500).json({ message: "No se pudieron obtener los libros"})
+	}
+	
 }
 
 const postBook = async (req = request, res = response) => {
+
 	try {
-		const bookRef = firebase.database().ref().child('books')
-		const storageRef = firebase.storage().bucket(process.env.STORAGE_BUCKET)
 		const { name, editorial, course, teacher, author } = req.body
-		const { cover } = req.files
-
-		const uploadResponse = await storageRef.upload(cover.tempFilePath, {
-			destination: `files/books/${cover.name}`,
-		})
-
-		let book = {
-			name,
-			editorial,
-			course,
-			teacher,
-			author,
-			cover: uploadResponse[0].metadata.name,
-			active: true,
+		
+		
+		if(!req.files || Object.keys(req.files).length === 0){
+			return res.status(500).send('No se encontraron archivos para subir. Por favor, asegurate de haber elegido una imagen para tu libro')
 		}
 
-		bookRef.push(book)
+		const { cover } = req.files
 
-		return res.status(201).send(book)
+		const uploadPath = path.join(__dirname, "../uploads/", cover.name )
+
+		cover.mv(uploadPath, (error) => {
+			if(error){
+				console.log(error)
+				return res.status(500).send('No se pudo crear el libro.')
+			}
+
+			console.log('File uploaded to: ' + uploadPath)
+		})
+
+		const book = new Book({ name, editorial, course, teacher, author, cover: cover.name })
+		await book.save()
+
+		res.status(201).json({ message: "Book created successfully", book})
+
 	} catch (error) {
 		console.error(error)
 		return res.status(500).send('No se pudo crear el libro.')
 	}
+	
 }
 
 module.exports = { getBook, postBook }
