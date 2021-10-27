@@ -61,7 +61,7 @@ const putUser = async (req = request, res = response, next = next) => {
 	try {
 
 		
-		await User.updateOne({ _id:idUser }, user)
+		await User.updateOne({ _id: idUser }, user)
 
 		return res.status(200).json({
 			message: 'User updated successfully',
@@ -72,19 +72,16 @@ const putUser = async (req = request, res = response, next = next) => {
 	}
 }
 
-const deleteUser = (req = request, res = response) => {
+const deleteUser = async (req = request, res = response) => {
 	const idUser = req.params.id
+	const user = {
+		active: false
+	}
 
 	try {
-		const userResponse = firebase.database().ref(`users/${idUser}`)
-		userResponse.once('value', (snapshot) => {
-			if (snapshot.val() !== null) {
-				userResponse.update({ active: false })
-				res.status(200).json({ message: 'User deleted successfully' })
-			} else {
-				res.status(404).end()
-			}
-		})
+		await User.updateOne({ _id: idUser }, user)
+		return res.status(200).json({ message: 'User deleted successfully' })
+
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
