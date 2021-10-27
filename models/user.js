@@ -23,6 +23,7 @@ const userSchema = Schema({
 	email: {
 		type: String,
 		require: [true, 'email is required'],
+		unique: true
 	},
 	phone_number: {
 		type: Number,
@@ -32,6 +33,24 @@ const userSchema = Schema({
 		type: String,
 		require: false,
 	},
+	active:{
+		type: Boolean,
+		require: false,
+		default: true
+	},
+	password:{
+		type:String,
+		require: [ true, 'password is required']
+	},
+	profileImage: {
+		type: String,
+		require: false
+	}
 })
+
+userSchema.methods.toJSON = function(){
+	const { __v, _id, ...user } = this.toObject()
+	return user
+}
 
 module.exports = model('User', userSchema)
