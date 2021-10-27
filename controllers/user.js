@@ -2,6 +2,7 @@ const { request, response } = require('express')
 const bcrypt = require('bcrypt')
 const firebase = require('firebase-admin')
 const User = require('../models/user')
+const { findById } = require('../models/user')
 
 
 const getUser = async (req = request, res = response) => {
@@ -58,14 +59,13 @@ const putUser = async (req = request, res = response, next = next) => {
 	}
 
 	try {
-		const userResponse = firebase.database().ref(`users/${idUser}`)
-		userResponse.once('value', (snapshot) => {
-			if (snapshot.val() !== null) {
-				userResponse.update(user)
-				res.status(200).json(user)
-			} else {
-				res.status(404).end()
-			}
+
+		
+		await User.updateOne({ _id:idUser }, user)
+
+		return res.status(200).json({
+			message: 'User updated successfully',
+			user
 		})
 	} catch (error) {
 		res.status(500).json(error.message)
