@@ -1,5 +1,7 @@
 const { compare } = require('bcrypt')
 const { response, request } = require('express')
+const jwt = require('jsonwebtoken')
+
 const generateJWT = require('../helpers/generateJWT')
 const User = require('../models/user')
 
@@ -45,6 +47,38 @@ const loginUser = async (req = request, res = response) => {
 			message: "We can't validate your credentials.",
 		})
 	}
+
 }
 
-module.exports = { loginUser }
+const validateUser = async (req = request, res = response) => {
+	const token = req.header('x-token')
+	if(!token){
+		return res.status(401).json({
+			message: 'Token not provided'
+		})
+	}
+
+	try {
+		const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY)
+		
+		const user = await User.findById(uid)
+
+		if(!user){
+			return res.status(401).json({ message: 'User not found'})
+		}
+
+		if(!user.active){
+			return res.status(401).json({ message:  'Invalid token'})
+		}
+	
+		return res.status(202).json(user)
+	} catch (error) {
+
+		console.log({ error })
+		return res.status(401).json({
+			message: 'Invalid token'
+		})
+
+	}
+}
+module.exports = { loginUser, validateUser }
