@@ -71,7 +71,7 @@ const validateUser = async (req = request, res = response) => {
 			return res.status(401).json({ message:  'Invalid token'})
 		}
 	
-		return res.status(202).json(user)
+		return res.status(202).json({user, token})
 	} catch (error) {
 
 		console.log({ error })
