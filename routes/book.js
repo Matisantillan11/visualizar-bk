@@ -1,6 +1,6 @@
 const { Router, response, request } = require('express')
 const { check } = require('express-validator')
-const { postBook, getBook } = require('../controllers/book')
+const { postBook, getBook, updateImage } = require('../controllers/book')
 const validateEntries = require('../middlewares/validateEntries')
 
 const router = Router()
@@ -21,7 +21,7 @@ router.post(
 	postBook,
 )
 
-router.put('/:id', () => {})
+router.put('/image/:id', updateImage)
 
 router.delete('/:id', () => {})
 
