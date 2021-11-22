@@ -55,13 +55,22 @@ const postBook = async (req = request, res = response) => {
 const updateImage = async (req = request, res = response) => {
 	const { id } = req.params
 
+	if(!req.files || Object.keys(req.files).length === 0){
+		return res.status(500).send('No se encontraron archivos para subir. Por favor, asegurate de haber elegido una imagen para tu libro')
+	}
+
 	try {
 		const book = await Book.findById(id)
 		if(book){
-			if(!req.files || Object.keys(req.files).length === 0){
-				return res.status(500).send('No se encontraron archivos para subir. Por favor, asegurate de haber elegido una imagen para tu libro')
-			}
 	
+			if(book.cover){
+
+				const url = book.cover.split('/')
+				const [ publicUrl ] = url.pop().split(".");
+
+				cloudinary.uploader.destroy(publicUrl);
+			}
+
 			const { tempFilePath } = req.files.cover
 			const {secure_url} = await cloudinary.uploader.upload(tempFilePath)
 			console.log("File uploaded")
@@ -71,6 +80,7 @@ const updateImage = async (req = request, res = response) => {
 			await Book.updateOne({_id: id}, book )
 
 			return res.status(200).json({ message: "Libro actualizado correctamente", book})
+			
 		}else{
 			return res.status(400).json({message: 'No se pudo actualizar el libro'})
 		}

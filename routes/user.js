@@ -4,6 +4,7 @@ const {
 	postUser,
 	getUser,
 	putUser,
+	updateImage,
 	deleteUser,
 } = require('../controllers/user')
 const validateEntries = require('../middlewares/validateEntries')
@@ -32,6 +33,7 @@ router.post(
 )
 
 router.put('/:id', putUser)
+router.put('/image/:id', updateImage)
 
 router.delete('/:id', deleteUser)
 

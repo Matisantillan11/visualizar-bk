@@ -1,5 +1,8 @@
 const { request, response } = require('express')
 const bcrypt = require('bcrypt')
+const cloudinary = require('cloudinary').v2
+cloudinary.config(process.env.CLOUDINARY_URL)
+
 const User = require('../models/user')
 
 
@@ -71,6 +74,43 @@ const putUser = async (req = request, res = response, next = next) => {
 	}
 }
 
+const updateImage = async (req = request, res = response) => {
+	const { id } = req.params
+
+	if(!req.files || Object.keys(req.files).length === 0){
+		return res.status(500).send('No se encontraron archivos para subir. Por favor, asegurate de haber elegido una imagen para tu libro')
+	}
+
+	try {
+		const user = await User.findById(id)
+		if(user){
+	
+			if(user.profileImage){
+
+				const url = user.profileImage.split('/')
+				const [ publicUrl ] = url.pop().split(".");
+
+				cloudinary.uploader.destroy(publicUrl);
+			}
+
+			const { tempFilePath } = req.files.profileImage
+			const {secure_url} = await cloudinary.uploader.upload(tempFilePath)
+			console.log("File uploaded")
+			
+			user.profileImage = secure_url
+
+			await User.updateOne({_id: id}, user )
+
+			return res.status(200).json({ message: "Usuario actualizado correctamente", user})
+			
+		}else{
+			return res.status(400).json({message: 'No se pudo actualizar el usuario'})
+		}
+	} catch (error) {
+		res.status(500).json(error.message)
+	}
+}
+
 const deleteUser = async (req = request, res = response) => {
 	const idUser = req.params.id
 	const user = {
@@ -86,4 +126,4 @@ const deleteUser = async (req = request, res = response) => {
 	}
 }
 
-module.exports = { getUser, postUser, putUser, deleteUser }
+module.exports = { getUser, postUser, putUser, updateImage, deleteUser }
