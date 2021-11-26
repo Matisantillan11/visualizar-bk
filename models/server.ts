@@ -3,9 +3,8 @@ import cors from 'cors'
 import fileUpload from 'express-fileupload'
 import auth from '../routes/auth'
 import user from '../routes/user'
+import book from '../routes/book'
 import { connectToDatabase } from '../database/config'
-/*import book from '../routes/book'
- */
 export default class Server {
 	private app: Application
 	private port: string 
@@ -45,7 +44,7 @@ export default class Server {
 	routes() {
 		this.app.use(this.authRoute, auth)
 		this.app.use(this.userRoute, user)
-		/* this.app.use(this.bookRoute, book) */
+		this.app.use(this.bookRoute, book)
 	}
 
 	listen() {
