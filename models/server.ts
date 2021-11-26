@@ -1,10 +1,10 @@
 import express, { Application } from 'express'
 import cors from 'cors'
 import fileUpload from 'express-fileupload'
-/* import user from '../routes/user'
 import auth from '../routes/auth'
-import book from '../routes/book'
+import user from '../routes/user'
 import { connectToDatabase } from '../database/config'
+/*import book from '../routes/book'
  */
 export default class Server {
 	private app: Application
@@ -22,9 +22,9 @@ export default class Server {
 
 		this.middlewares()
 
-		/* this.routes()
+		this.routes()
 
-		this.database() */
+		this.database()
 	}
 
 	middlewares() {
@@ -38,15 +38,15 @@ export default class Server {
 		)
 	}
 
-	/* async database() {
+	async database() {
 		await connectToDatabase()
-	} */
+	}
 
-	/* routes() {
-		this.app.use(this.userRoute, user)
+	routes() {
 		this.app.use(this.authRoute, auth)
-		this.app.use(this.bookRoute, book)
-	} */
+		this.app.use(this.userRoute, user)
+		/* this.app.use(this.bookRoute, book) */
+	}
 
 	listen() {
 		this.app.listen(this.port, () => {

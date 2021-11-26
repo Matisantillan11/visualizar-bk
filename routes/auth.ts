@@ -1,8 +1,8 @@
-const { Router, response, request } = require('express')
-const { check } = require('express-validator')
-const { loginUser, validateUser } = require('../controllers/auth')
+import { Router } from 'express'
+import { check } from 'express-validator'
+import {loginUser, validateUser} from '../controllers/auth'
 
-const validateEntries = require('../middlewares/validateEntries')
+import validateEntries from '../middlewares/validateEntries'
 
 const router = Router()
 
@@ -18,4 +18,4 @@ router.post(
 
 router.post('/validate', validateUser)
 
-module.exports = router
+export default router

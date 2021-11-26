@@ -1,17 +1,17 @@
-const { compare } = require('bcrypt')
-const { response, request } = require('express')
-const jwt = require('jsonwebtoken')
+import { compare } from 'bcrypt'
+import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 
-const generateJWT = require('../helpers/generateJWT')
-const User = require('../models/user')
-
-const loginUser = async (req = request, res = response) => {
+import { generateJWT } from '../helpers/generateJWT'
+import User from '../models/user'
+export const loginUser = async (req:Request, res:Response) => {
 	try {
+
 		let { email, password } = req.body
 
 
 		const user = await User.findOne({ email })
-
+		let canLogin: boolean = false
 		if(user){
 			const correctPassword = await compare( password, user.password)
 			if(correctPassword){
@@ -50,7 +50,7 @@ const loginUser = async (req = request, res = response) => {
 
 }
 
-const validateUser = async (req = request, res = response) => {
+export const validateUser = async (req: Request, res: Response) => {
 	const token = req.header('x-token')
 	if(!token){
 		return res.status(401).json({
@@ -59,8 +59,8 @@ const validateUser = async (req = request, res = response) => {
 	}
 
 	try {
-		const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY)
-		
+		const uid = jwt.verify(token, process.env.SECRETORPRIVATEKEY || '')
+
 		const user = await User.findById(uid)
 
 		if(!user){
@@ -81,4 +81,4 @@ const validateUser = async (req = request, res = response) => {
 
 	}
 }
-module.exports = { loginUser, validateUser }
+

@@ -1,13 +1,11 @@
-const { request, response } = require('express')
-const bcrypt = require('bcrypt')
-const cloudinary = require('cloudinary').v2
-cloudinary.config(process.env.CLOUDINARY_URL)
+import { ErrorRequestHandler, Request, request, Response, response, } from 'express'
+import bcrypt from 'bcrypt'
+/* import cloudinary from 'cloudinary'
+cloudinary.config(process.env.CLOUDINARY_URL) */
 
-const User = require('../models/user')
+import User from '../models/user'
 
-
-
-const getUser = async (req = request, res = response) => {
+export const getUser = async (req: Request, res: Response) => {
 	try {
 		const idUser = req.query.id
 		let user
@@ -20,12 +18,12 @@ const getUser = async (req = request, res = response) => {
 		}
 	
 		return res.status(200).json({ users: user })
-	} catch (error) {
+	} catch (error: any) {
 		return res.status(500).json(error.message)
 	}
 }
 
-const postUser = async (req = request, res = response) => {
+export const postUser = async (req: Request, res: Response) => {
 	try {
 		const { fullname, dni, role, email, password, school } = req.body
 		const salt = 10
@@ -45,13 +43,13 @@ const postUser = async (req = request, res = response) => {
 		delete user.password
 
 		return res.status(201).send(user)
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error.message)
 		return res.status(500).json("No se pudo crear el usuario.")
 	}
 }
 
-const putUser = async (req = request, res = response, next = next) => {
+export const putUser = async (req: Request, res: Response) => {
 	const idUser = req.params.id
 	const { fullname, dni, email } = req.body
 	const user = {
@@ -69,12 +67,12 @@ const putUser = async (req = request, res = response, next = next) => {
 			message: 'User updated successfully',
 			user
 		})
-	} catch (error) {
+	} catch (error: any) {
 		res.status(500).json(error.message)
 	}
 }
 
-const updateImage = async (req = request, res = response) => {
+/* export const updateImage = async (req = request, res = response) => {
 	const { id } = req.params
 
 	if(!req.files || Object.keys(req.files).length === 0){
@@ -109,9 +107,9 @@ const updateImage = async (req = request, res = response) => {
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
-}
+} */
 
-const deleteUser = async (req = request, res = response) => {
+export const deleteUser = async (req: Request, res: Response) => {
 	const idUser = req.params.id
 	const user = {
 		active: false
@@ -121,9 +119,8 @@ const deleteUser = async (req = request, res = response) => {
 		await User.updateOne({ _id: idUser }, user)
 		return res.status(200).json({ message: 'User deleted successfully' })
 
-	} catch (error) {
+	} catch (error: any) {
 		res.status(500).json(error.message)
 	}
 }
 
-module.exports = { getUser, postUser, putUser, updateImage, deleteUser }

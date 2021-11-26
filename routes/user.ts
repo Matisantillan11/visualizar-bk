@@ -1,13 +1,13 @@
-const { Router, response, request } = require('express')
-const { check } = require('express-validator')
-const {
+import { Router, response, request } from 'express'
+import { check } from 'express-validator'
+import {
 	postUser,
 	getUser,
 	putUser,
-	updateImage,
+/* 	updateImage, */
 	deleteUser,
-} = require('../controllers/user')
-const validateEntries = require('../middlewares/validateEntries')
+} from '../controllers/user'
+import validateEntries from '../middlewares/validateEntries'
 
 const router = Router()
 
@@ -33,8 +33,7 @@ router.post(
 )
 
 router.put('/:id', putUser)
-router.put('/image/:id', updateImage)
-
+/* router.put('/image/:id', updateImage) */
 router.delete('/:id', deleteUser)
 
-module.exports = router
+export default router
