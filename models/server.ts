@@ -1,23 +1,30 @@
-const express = require('express')
-const cors = require('cors')
-const fileUpload = require('express-fileupload')
-const user = require('../routes/user')
-const auth = require('../routes/auth')
-const book = require('../routes/book')
-const { connectToDatabase } = require('../database/config')
-class Server {
+import express, { Application } from 'express'
+import cors from 'cors'
+import fileUpload from 'express-fileupload'
+/* import user from '../routes/user'
+import auth from '../routes/auth'
+import book from '../routes/book'
+import { connectToDatabase } from '../database/config'
+ */
+export default class Server {
+	private app: Application
+	private port: string 
+	private userRoute: string
+	private authRoute: string
+	private bookRoute: string
+
 	constructor() {
 		this.app = express()
-		this.port = process.env.PORT || 3001
+		this.port = process.env.PORT || '3001'
 		this.userRoute = '/api/users'
 		this.authRoute = '/api/auth'
 		this.bookRoute = '/api/books'
 
 		this.middlewares()
 
-		this.routes()
+		/* this.routes()
 
-		this.database()
+		this.database() */
 	}
 
 	middlewares() {
@@ -31,15 +38,15 @@ class Server {
 		)
 	}
 
-	async database() {
+	/* async database() {
 		await connectToDatabase()
-	}
+	} */
 
-	routes() {
+	/* routes() {
 		this.app.use(this.userRoute, user)
 		this.app.use(this.authRoute, auth)
 		this.app.use(this.bookRoute, book)
-	}
+	} */
 
 	listen() {
 		this.app.listen(this.port, () => {
@@ -48,4 +55,3 @@ class Server {
 	}
 }
 
-module.exports = Server
