@@ -5,6 +5,25 @@ import validateEntries from '../middlewares/validateEntries';
 
 const router = Router()
 
+
+/**
+ * @swagger
+ * /api/books:
+ *   get:
+ *     description: Endpoint creado para recibir un listado de libros o uno específico.
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: 'https://api-visualizar.herokuapp.com/api/books?id=619acc8faff19f04644a445f'
+ *       - name: id
+ *         description: id del libro a buscar.
+ *         in: json
+ *         required: false
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Obtendrás un listado de libros
+ */
 router.get('/', getBook)
 
 router.post(

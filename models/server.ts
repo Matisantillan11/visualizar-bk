@@ -5,12 +5,16 @@ import auth from '../routes/auth'
 import user from '../routes/user'
 import book from '../routes/book'
 import { connectToDatabase } from '../database/config'
+import swaggerJsDoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import  swaggerOptions from '../swagger'
 export default class Server {
 	private app: Application
 	private port: string 
 	private userRoute: string
 	private authRoute: string
 	private bookRoute: string
+	private swaggerRoute: string
 
 	constructor() {
 		this.app = express()
@@ -18,6 +22,7 @@ export default class Server {
 		this.userRoute = '/api/users'
 		this.authRoute = '/api/auth'
 		this.bookRoute = '/api/books'
+		this.swaggerRoute = '/api/docs'
 
 		this.middlewares()
 
@@ -41,10 +46,15 @@ export default class Server {
 		await connectToDatabase()
 	}
 
+
+	
 	routes() {
+		const swaggerDocs = swaggerJsDoc(swaggerOptions.swaggerOptions)
+
 		this.app.use(this.authRoute, auth)
 		this.app.use(this.userRoute, user)
 		this.app.use(this.bookRoute, book)
+		this.app.use(this.swaggerRoute, swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 	}
 
 	listen() {

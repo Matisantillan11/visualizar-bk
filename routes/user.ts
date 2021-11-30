@@ -11,6 +11,24 @@ import validateEntries from '../middlewares/validateEntries'
 
 const router = Router()
 
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     description: Endpoint creado para recibir un listado de usuarios o uno específico.
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: 'https://api-visualizar.herokuapp.com/api/users?id=6178a40dbb84cb3ebcb45f9a'
+ *       - name: id
+ *         description: id del usuario a buscar.
+ *         in: json
+ *         required: false
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Obtendrás un listado de usuarios
+ */
 router.get('/', getUser)
 
 router.post(
