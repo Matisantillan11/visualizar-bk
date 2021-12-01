@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { check } from 'express-validator'
 import { postBook, getBook, updateImage } from '../controllers/book'
 import validateEntries from '../middlewares/validateEntries';
+import { isAuthenticated } from '../middlewares/isAuthenticated';
 
 const router = Router()
 
@@ -24,11 +25,12 @@ const router = Router()
  *       200:
  *         description: Obtendrás un listado de libros
  */
-router.get('/', getBook)
+router.get('/', [isAuthenticated] ,getBook)
 
 router.post(
 	'/',
 	[
+		isAuthenticated,
 		check('name', ' You need to provide book name').notEmpty(),
 		check('author', 'You need to provide the author of the book').notEmpty(),
 		check(
@@ -41,8 +43,8 @@ router.post(
 	postBook,
 )
 
-router.put('/image/:id', updateImage)
+router.put('/image/:id', [isAuthenticated], updateImage)
 
-router.delete('/:id', () => {})
+router.delete('/:id', [isAuthenticated], () => {})
 
 export default router

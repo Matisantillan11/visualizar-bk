@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { customResponse } from '../helpers/customResponse';
 import Book from '../models/book'
 const cloudinary = require('cloudinary').v2
 cloudinary.config({ 
@@ -19,10 +20,11 @@ export const getBook = async (req:Request, res: Response) => {
 		book = await Book.findById(idUBook)	
 	} else {
 		book = await Book.find()
-		
 	}
 
-	return res.status(200).json({ books: book })
+
+
+	return res.send(customResponse(200, {books: book }, false, 'Listado de libros'))
 	} catch (error: any) {
 		console.error(error.message)
 		return res.status(500).json({ message: "No se pudieron obtener los libros"})

@@ -7,6 +7,7 @@ import {
 /* 	updateImage, */
 	deleteUser,
 } from '../controllers/user'
+import { isAuthenticated } from '../middlewares/isAuthenticated'
 import validateEntries from '../middlewares/validateEntries'
 
 const router = Router()
@@ -29,11 +30,12 @@ const router = Router()
  *       200:
  *         description: Obtendrás un listado de usuarios
  */
-router.get('/', getUser)
+router.get('/', [isAuthenticated], getUser)
 
 router.post(
 	'/',
 	[
+		isAuthenticated,
 		check('fullname', 'You need to provide your fullname').isString(),
 		check('dni', 'You need to provide a valid DNI')
 			.isNumeric()
@@ -50,8 +52,8 @@ router.post(
 	postUser,
 )
 
-router.put('/:id', putUser)
+router.put('/:id', [isAuthenticated],  putUser)
 /* router.put('/image/:id', updateImage) */
-router.delete('/:id', deleteUser)
+router.delete('/:id', [isAuthenticated], deleteUser)
 
 export default router
