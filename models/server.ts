@@ -1,19 +1,22 @@
 import express, { Application } from 'express'
 import cors from 'cors'
 import fileUpload from 'express-fileupload'
+import swaggerUi from 'swagger-ui-express'
+import swaggerJsDoc from 'swagger-jsdoc'
+
+import swaggerOptions from '../swagger'
 import auth from '../routes/auth'
 import user from '../routes/user'
 import book from '../routes/book'
+import rol from '../routes/rol'
 import { connectToDatabase } from '../database/config'
-import swaggerJsDoc from 'swagger-jsdoc'
-import swaggerUi from 'swagger-ui-express'
-import  swaggerOptions from '../swagger'
 export default class Server {
 	private app: Application
 	private port: string 
 	private userRoute: string
 	private authRoute: string
 	private bookRoute: string
+	private rolRoute: string
 	private swaggerRoute: string
 
 	constructor() {
@@ -22,6 +25,7 @@ export default class Server {
 		this.userRoute = '/api/users'
 		this.authRoute = '/api/auth'
 		this.bookRoute = '/api/books'
+		this.rolRoute = '/api/rol'
 		this.swaggerRoute = '/api/docs'
 
 		this.middlewares()
@@ -54,6 +58,7 @@ export default class Server {
 		this.app.use(this.authRoute, auth)
 		this.app.use(this.userRoute, user)
 		this.app.use(this.bookRoute, book)
+		this.app.use(this.rolRoute, rol)
 		this.app.use(this.swaggerRoute, swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 	}
 

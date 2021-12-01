@@ -1,4 +1,4 @@
-import { ErrorRequestHandler, Request, request, Response, response, } from 'express'
+import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 /* import cloudinary from 'cloudinary'
 cloudinary.config(process.env.CLOUDINARY_URL) */
