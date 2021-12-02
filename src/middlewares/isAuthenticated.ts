@@ -4,7 +4,7 @@ import { Error } from "mongoose";
 import { customResponse } from '../helpers/customResponse';
 import User from "../models/user";
 
-interface TokenInterface {
+export interface TokenInterface {
   uid: string
 }
 

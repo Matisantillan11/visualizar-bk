@@ -4,7 +4,7 @@ import fileUpload from 'express-fileupload'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 
-import swaggerOptions from '../swagger'
+import swaggerOptions from '../../swagger'
 import auth from '../routes/auth'
 import user from '../routes/user'
 import book from '../routes/book'

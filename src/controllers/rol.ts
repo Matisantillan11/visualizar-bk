@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { customResponse } from '../helpers/customResponse';
-import Rol from '../models/rol'
+import Rol from '../models/Rol/interface';
+import RolModel from '../models/Rol/rol'
 
 export const getRol = async (req: Request, res: Response) => {
 	try {
@@ -8,9 +9,10 @@ export const getRol = async (req: Request, res: Response) => {
 		let rol
 
 		if (idRol) {
-			rol = await Rol.findById(idRol)	
+			rol = await RolModel.find({ _id: idRol, active: true})
+
 		} else {
-			rol = await Rol.find()
+			rol = await RolModel.find({ active: true })
 			
 		}
 	
@@ -26,7 +28,7 @@ export const postRol = async (req: Request, res: Response) => {
 	
 		name = name.toUpperCase()
 
-		const rol = new Rol ({
+		const rol = new RolModel({
 			name,
 			active: true,
 		
@@ -52,7 +54,7 @@ export const putRol = async (req: Request, res: Response) => {
 
 	try {
 		
-		await Rol.updateOne({ _id: idRol }, rol)
+		await RolModel.updateOne({ _id: idRol }, rol)
 
 		return res.send(customResponse(200, { rol }, false, 'actualizado correctamente'))
 	} catch (error: any) {
@@ -68,7 +70,7 @@ export const deleteRol = async (req: Request, res: Response) => {
 	}
 
 	try {
-		await Rol.updateOne({ _id: idRol }, rol)
+		await RolModel.updateOne({ _id: idRol }, rol)
 		return res.send(customResponse(200, {rol }, false, 'Borrado exitosamente'))
 
 	} catch (error: any) {

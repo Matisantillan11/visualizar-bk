@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { check } from 'express-validator'
-import {loginUser, validateUser} from '../controllers/auth'
+import {loginUser, validateUser} from '../services/Authentication/auth'
 
 import validateEntries from '../middlewares/validateEntries'
 
