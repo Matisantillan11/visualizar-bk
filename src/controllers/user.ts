@@ -3,7 +3,8 @@ import bcrypt from 'bcrypt'
 /* import cloudinary from 'cloudinary'
 cloudinary.config(process.env.CLOUDINARY_URL) */
 
-import User from '../models/user'
+import User from '../models/User/user'
+import { customResponse } from '../helpers/customResponse';
 
 export const getUser = async (req: Request, res: Response) => {
 	try {
@@ -11,15 +12,16 @@ export const getUser = async (req: Request, res: Response) => {
 		let user
 
 		if (idUser) {
-			user = await User.findById(idUser)	
+			user = await User.find({ _id: idUser, active: true})	
 		} else {
-			user = await User.find()
+			user = await User.find({ active: true})
 			
 		}
 	
-		return res.status(200).json({ users: user })
+		return res.send(customResponse(201, user, false, ""))
 	} catch (error: any) {
-		return res.status(500).json(error.message)
+		console.log(error.message)
+		return res.send(customResponse(500, [], true, "No se pudo obtener los/el usuario."))
 	}
 }
 
@@ -40,12 +42,12 @@ export const postUser = async (req: Request, res: Response) => {
 		})
 
 		await user.save()
-		delete user.password
+		user["password"] = ''
 
-		return res.status(201).send(user)
+		return res.send(customResponse(201, user, false, "Usuario creado correctamente"))
 	} catch (error: any) {
 		console.error(error.message)
-		return res.status(500).json("No se pudo crear el usuario.")
+		return res.send(customResponse(500, [], true, "No se pudo crear el usuario."))
 	}
 }
 
@@ -63,12 +65,10 @@ export const putUser = async (req: Request, res: Response) => {
 		
 		await User.updateOne({ _id: idUser }, user)
 
-		return res.status(200).json({
-			message: 'User updated successfully',
-			user
-		})
+		return res.send(customResponse(200, user, false, "Usuario actualizado correctamente"))
 	} catch (error: any) {
-		res.status(500).json(error.message)
+		console.log(error.message)
+		return res.send(customResponse(500, [], true, "No se pudo actualizar el usuario."))
 	}
 }
 
@@ -117,10 +117,11 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 	try {
 		await User.updateOne({ _id: idUser }, user)
-		return res.status(200).json({ message: 'User deleted successfully' })
+		return res.send(customResponse(201, user, false, "Usuario eliminado correctamente"))
 
 	} catch (error: any) {
-		res.status(500).json(error.message)
+		console.log(error.message)
+		return res.send(customResponse(500, [], true, "No se pudo eliminar el usuario."))
 	}
 }
 

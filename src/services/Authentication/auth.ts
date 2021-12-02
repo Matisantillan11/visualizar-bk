@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 import { generateJWT } from '../../helpers/generateJWT'
 import { TokenInterface } from '../../middlewares/isAuthenticated'
-import User from '../../models/user'
+import User from '../../models/User/user'
 import { customResponse } from '../../helpers/customResponse';
 export const loginUser = async (req:Request, res:Response) => {
 	try {
@@ -20,7 +20,7 @@ export const loginUser = async (req:Request, res:Response) => {
 				if(user.active){
 					canLogin = true
 					const token = await generateJWT(user._id)
-					delete user.password
+					user["password"] = ''
 
 					let response: {user: any, token: any} = {user, token}
 					return res.send(customResponse(202, response, false, "Iniciaste sesión correctamente"))

@@ -2,7 +2,7 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import  jwt, { JwtPayload } from 'jsonwebtoken' 
 import { Error } from "mongoose";
 import { customResponse } from '../helpers/customResponse';
-import User from "../models/user";
+import User from "../models/User/user";
 
 export interface TokenInterface {
   uid: string
