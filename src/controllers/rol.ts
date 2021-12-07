@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { customResponse } from '../helpers/customResponse';
-import Rol from '../models/Rol/interface';
 import RolModel from '../models/Rol/rol'
 
 export const getRol = async (req: Request, res: Response) => {
@@ -16,9 +15,9 @@ export const getRol = async (req: Request, res: Response) => {
 			
 		}
 	
-		return res.status(200).json({ rols: rol })
+		return res.send(customResponse(201, rol, false, ""))
 	} catch (error: any) {
-		return res.status(500).json(error.message)
+		return res.send(customResponse(500, [], true, error.message))
 	}
 }
 
@@ -28,17 +27,17 @@ export const postRol = async (req: Request, res: Response) => {
 	
 		name = name.toUpperCase()
 
-		const rol = new RolModel({
+		const role = new RolModel({
 			name,
 			active: true,
 		
 		})
 
-		const role = await rol.save()
+		const rol = await role.save()
 
-		return res.send(customResponse(200, {rol: role}, false, 'Creado correactamente'))
+		return res.send(customResponse(200, rol, false, 'Creado correactamente'))
 	} catch (error: any) {
-		res.send(customResponse(500, {}, true, error.message))
+		res.send(customResponse(500, [], true, error.message))
 	}
 }
 
@@ -56,9 +55,9 @@ export const putRol = async (req: Request, res: Response) => {
 		
 		await RolModel.updateOne({ _id: idRol }, rol)
 
-		return res.send(customResponse(200, { rol }, false, 'actualizado correctamente'))
+		return res.send(customResponse(200, rol, false, 'actualizado correctamente'))
 	} catch (error: any) {
-		res.send(customResponse(500, {}, true, error.message))
+		res.send(customResponse(500, [], true, error.message))
 	}
 }
 
@@ -71,10 +70,10 @@ export const deleteRol = async (req: Request, res: Response) => {
 
 	try {
 		await RolModel.updateOne({ _id: idRol }, rol)
-		return res.send(customResponse(200, {rol }, false, 'Borrado exitosamente'))
+		return res.send(customResponse(200, rol, false, 'Borrado exitosamente'))
 
 	} catch (error: any) {
-		res.send(customResponse(500, {}, true, error.message))
+		res.send(customResponse(500, [], true, error.message))
 	}
 }
 
