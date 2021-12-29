@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
 import { customResponse } from '../helpers/customResponse';
 import Book from '../models/Book/book'
+import config from '../config'
+
 const cloudinary = require('cloudinary').v2
 cloudinary.config({ 
   cloud_name: 'dj9mg8pvk', 
-  api_key: process.env.CLOUDINARY_API_KEY, 
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_key: config.CLOUDINARY_API_KEY, 
+  api_secret: config.CLOUDINARY_API_SECRET,
+	secure: true
 });
 
 
@@ -76,8 +79,8 @@ export const updateImage = async (req:Request, res: Response) => {
 				cloudinary.uploader.destroy(publicUrl);
 			}
 
-			const  tempFilePath  = req.files.cover
-			const {secure_url} = await cloudinary.uploader.upload(tempFilePath)
+			const file: any = req.files.cover
+			const { secure_url } = await cloudinary.uploader.upload(file.tempFilePath)
 			console.log("File uploaded")
 			
 			book.cover = secure_url

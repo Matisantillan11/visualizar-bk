@@ -4,8 +4,8 @@ import {
 	postUser,
 	getUser,
 	putUser,
-/* 	updateImage, */
 	deleteUser,
+	updateImage,
 } from '../controllers/user'
 import { isAuthenticated } from '../middlewares/isAuthenticated'
 import validateEntries from '../middlewares/validateEntries'
@@ -53,7 +53,7 @@ router.post(
 )
 
 router.put('/:id', [isAuthenticated],  putUser)
-/* router.put('/image/:id', updateImage) */
+router.put('/image/:id',[isAuthenticated], updateImage)
 router.delete('/:id', [isAuthenticated], deleteUser)
 
 export default router

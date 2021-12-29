@@ -1,10 +1,19 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-/* import cloudinary from 'cloudinary'
-cloudinary.config(process.env.CLOUDINARY_URL) */
+
+import config from '../config';
 
 import User from '../models/User/user'
 import { customResponse } from '../helpers/customResponse';
+import fileUpload from 'express-fileupload';
+
+const cloudinary = require('cloudinary').v2
+cloudinary.config({ 
+  cloud_name: 'dj9mg8pvk', 
+  api_key: config.CLOUDINARY_API_KEY, 
+  api_secret: config.CLOUDINARY_API_SECRET,
+	secure: true
+});
 
 export const getUser = async (req: Request, res: Response) => {
 	try {
@@ -72,11 +81,11 @@ export const putUser = async (req: Request, res: Response) => {
 	}
 }
 
-/* export const updateImage = async (req = request, res = response) => {
+export const updateImage = async (req: Request, res: Response) => {
 	const { id } = req.params
 
 	if(!req.files || Object.keys(req.files).length === 0){
-		return res.status(500).send('No se encontraron archivos para subir. Por favor, asegurate de haber elegido una imagen para tu libro')
+		return res.send(customResponse(500, [], true, 'No se encontraron archivos para subir. Por favor, asegurate de haber elegido una imagen para tu foto de perfil'))
 	}
 
 	try {
@@ -86,28 +95,28 @@ export const putUser = async (req: Request, res: Response) => {
 			if(user.profileImage){
 
 				const url = user.profileImage.split('/')
-				const [ publicUrl ] = url.pop().split(".");
+				const [ publicUrl ]: any = url?.pop()?.split(".");
 
 				cloudinary.uploader.destroy(publicUrl);
 			}
 
-			const { tempFilePath } = req.files.profileImage
-			const {secure_url} = await cloudinary.uploader.upload(tempFilePath)
+			const file: any = req.files.profileImage
+			const {secure_url} = await cloudinary.uploader.upload(file?.tempFilePath)
 			console.log("File uploaded")
 			
 			user.profileImage = secure_url
 
 			await User.updateOne({_id: id}, user )
 
-			return res.status(200).json({ message: "Usuario actualizado correctamente", user})
+			return res.send(customResponse(201, user , false, 'Foto de perfil actualizada correctamente'))
 			
 		}else{
-			return res.status(400).json({message: 'No se pudo actualizar el usuario'})
+			return res.send(customResponse(404, [], true, 'No se encontró el usuario.'))
 		}
-	} catch (error) {
-		res.status(500).json(error.message)
+	} catch (error: any) {
+		return res.send(customResponse(500, [], true, error?.message))
 	}
-} */
+}
 
 export const deleteUser = async (req: Request, res: Response) => {
 	const idUser = req.params.id
