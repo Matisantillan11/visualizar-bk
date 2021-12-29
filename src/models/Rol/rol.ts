@@ -1,8 +1,7 @@
 import { Schema, model } from 'mongoose'
 import Rol from './interface'
 
-
-const rolSchema = new Schema<Rol>({
+export const modelRol = {
 	name: {
 		type: String,
 		typed: 'string',
@@ -12,9 +11,10 @@ const rolSchema = new Schema<Rol>({
     type: Boolean,
 		typed: 'boolean',
     require: false,
-    default: true
   },
-})
+}
+
+const rolSchema = new Schema<Rol>(modelRol)
 
 export default model<Rol>('Rol', rolSchema)
 

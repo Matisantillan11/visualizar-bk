@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import User from "./interface"
 
-const userSchema = new Schema<User>({
+export const modelUser = {
 	fullname: {
 		type: String,
 		typed: 'string',
@@ -57,7 +57,8 @@ const userSchema = new Schema<User>({
 		typed: 'string',
 		require: false
 	}
-})
+}
+const userSchema = new Schema<User>(modelUser)
 
 userSchema.methods.toJSON = function(){
 	const { __v, password, ...user } = this.toObject()

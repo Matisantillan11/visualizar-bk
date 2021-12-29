@@ -1,7 +1,7 @@
 import {Schema, model } from 'mongoose'
 import Book from './interface'
 
-const bookSchema = new Schema<Book>({
+export const modelBook={
 	name: {
 		type: String,
 		typed: 'string',
@@ -39,7 +39,9 @@ const bookSchema = new Schema<Book>({
 		require: false,
 		default: true
 	},
-})
+}
+
+const bookSchema = new Schema<Book>(modelBook)
 
 
 bookSchema.methods.toJSON = function(){
