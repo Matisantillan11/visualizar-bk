@@ -34,14 +34,14 @@ export class UserService {
     }
   }
 
-  public async isEnable(id: string, model: Model<Document, {}>): Promise<Boolean> {
-    let isEnable: boolean = false;
-    let match = {
+  public async isEnable(id: string, model: Model<Document, {}>): Promise<boolean> {
+    let isEnable = false;
+    const match = {
       _id: { $oid: id },
     };
-    let limit = 1;
-    let skip = 0;
-    let aggregations = {
+    const limit = 1;
+    const skip = 0;
+    const aggregations = {
       match,
       limit,
       skip,
@@ -50,7 +50,7 @@ export class UserService {
     const responseService = await this.utilService.getAll(model, aggregations);
 
     if (responseService.result) {
-      let user: ObjInterface = responseService.result;
+      const user: ObjInterface = responseService.result;
       if (user.enabled) {
         isEnable = true;
       } else {
@@ -60,7 +60,7 @@ export class UserService {
     return isEnable;
   }
 
-  public async isMatch(loginPass: string, userPass: string): Promise<Boolean> {
+  public async isMatch(loginPass: string, userPass: string): Promise<boolean> {
     return await compare(loginPass, userPass);
   }
 
@@ -69,7 +69,7 @@ export class UserService {
     model: Model<Document, {}>,
     permissionModel: Model<Document, {}>,
   ): Promise<Responseable> {
-    let aggregations = {
+    const aggregations = {
       match: { email: email, operationType: { $ne: 'D' } },
       limit: 1,
       skip: 0,
@@ -77,14 +77,14 @@ export class UserService {
     return this.utilService.getAll(model, aggregations);
   }
 
-  public async existUserWithThatEmail(email: string, model: Model<Document, {}>): Promise<Boolean> {
-    let aggregations = {
+  public async existUserWithThatEmail(email: string, model: Model<Document, {}>): Promise<boolean> {
+    const aggregations = {
       match: { email: email, operationType: { $ne: 'D' } },
       limit: 0,
       skip: 0,
     };
 
-    let exist: boolean = false;
+    let exist = false;
     const responseService = await this.utilService.getAll(model, aggregations);
 
     if (Object.entries(responseService.result).length > 0) {

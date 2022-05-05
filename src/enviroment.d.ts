@@ -5,6 +5,7 @@ declare namespace NodeJS {
     CLUSTER: string
     OKEN_SECRET: string
     NODE_ENV: 'dev' | 'prod'
+    ADMIN_USER: string
   }
 }
 

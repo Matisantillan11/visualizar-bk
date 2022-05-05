@@ -7,6 +7,7 @@ import { ConnectionProvider } from './application/database/connectionProvider.se
 import { AppService } from './app.service';
 import { EmailModule } from './application/email/email.module';
 import { AuthenticationModule } from './application/authentication/authentication.module';
+import { BookModule } from './modules/book/book.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthenticationModule } from './application/authentication/authenticatio
     AuthenticationModule,
     EmailModule,
     UserModule,
+    BookModule
   ],
   controllers: Config.controllers.app,
   providers: Config.services.app,
