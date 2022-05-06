@@ -22,8 +22,8 @@ import BookSchema from 'src/modules/book/schemas/book.model';
 import UserSchema from 'src/modules/user/schemas/user.model';
 
 import Responseable from 'src/utils/Ports/Responseable';
-import { Config } from 'src/config';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AwsService } from 'src/modules/aws/providers/aws.service';
 
 @Controller('book')
 export class BookController {
@@ -34,6 +34,7 @@ export class BookController {
 
   constructor(
     @Inject(ConnectionProvider) private readonly connectionProvider: ConnectionProvider,
+    private readonly awsService: AwsService,
     private readonly bookService: BookService,
   ) {
     this.bookSchema = new BookSchema();
@@ -110,8 +111,17 @@ export class BookController {
       }
       const adminResponse = await this.bookService.getAll(userModel, userAggregtions);
 
+
+
       if(Object.keys(adminResponse.result).length > 0){
 
+        if(cover){
+          const file: any = await this.awsService.upload(cover);
+          if(file.Location){
+            payload.cover = file.Location;
+          }
+        }
+        
         const saveResponse = await this.bookService.create(model, payload, adminResponse.result._id);
         if(Object.keys(saveResponse).length > 0){
           this.responseService = {

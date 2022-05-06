@@ -5,7 +5,9 @@ import { UserService } from 'src/modules/user/providers/user.service';
 import { BookService } from './modules/book/providers/book.service';
 import { RolController } from 'src/modules/user/controllers/rol.controller';
 import { UserController } from 'src/modules/user/controllers/user.controller';
-import { BookController } from './modules/book/controllers/book.controller';
+import { BookController } from 'src/modules/book/controllers/book.controller';
+import { AwsService } from 'src/modules/aws/providers/aws.service';
+import { AwsController } from 'src/modules/aws/controllers/aws.controller';
 
 export const Config = {
   enviroment: {
@@ -18,11 +20,13 @@ export const Config = {
   },
   services: {
     app: [AppService],
+    aws: [AppService, AwsService],
     user: [AppService, UserService, RolService, BookService],
-    book: [AppService, BookService],
+    book: [AppService, AwsService, BookService],
   },
   controllers: {
     app: [AppController],
+    aws: [AwsController],
     user: [UserController, RolController],
     book: [BookController],
   },

@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { EmailModule } from './application/email/email.module';
 import { AuthenticationModule } from './application/authentication/authentication.module';
 import { BookModule } from './modules/book/book.module';
+import { AwsModule } from './modules/aws/aws.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { BookModule } from './modules/book/book.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
+    AwsModule,
     DatabaseModule,
     AuthenticationModule,
     EmailModule,

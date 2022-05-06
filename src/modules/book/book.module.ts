@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConnectionProvider } from 'src/application/database/connectionProvider.service';
 import { Config } from 'src/config';
-import { BookController } from './controllers/book.controller';
 import { BookService } from './providers/book.service';
 
 @Module({
