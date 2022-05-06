@@ -16,7 +16,7 @@ export class BookService implements Serviceable {
     return this.utilService.save(data, model, model, idUser);
   }
 
-  update(id: string, data: any, model: Model<Document, {}>, idUser: string): Promise<Responseable> {
+  update(model: Model<Document, {}>, id: string, data: any, idUser: string): Promise<Responseable> {
     return this.utilService.update(id, data, model, model, idUser);
   }
 }

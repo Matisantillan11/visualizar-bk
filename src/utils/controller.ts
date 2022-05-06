@@ -421,10 +421,6 @@ export default class Controller implements Controlleable {
 
       delete objData._id;
 
-      // console.log('save: ' + model.modelName)
-      // console.log(objData)
-
-      //TODO quitar esta dependencia
       objData.creationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
       objData.operationType = 'C';
 
@@ -504,8 +500,6 @@ export default class Controller implements Controlleable {
     userModel: Model<Document, {}>,
     idUser: string,
   ): Promise<Responseable> {
-    // console.log('update: ' + model.modelName)
-    // console.log(objData)
 
     return new Promise<Responseable>(async (resolve, reject) => {
       objData.updateDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');

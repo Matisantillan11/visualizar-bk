@@ -4,9 +4,9 @@ import Responseable from 'src/utils/Ports/Responseable';
 
 export default interface Updateable {
   update(
+    model: Model<Document, {}>,
     id: string,
     data: Book,
-    model: Model<Document, {}>,
     idUser: string,
   ): Promise<Responseable>;
 }

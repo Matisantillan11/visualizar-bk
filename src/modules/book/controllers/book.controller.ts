@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   Req,
   Res,
   UploadedFile,
@@ -154,13 +155,85 @@ export class BookController {
         result: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         message: '',
-        error: error.message,
+        error: 'Book cannot be updated.',
       }
     }
 
     if(this.responseService.status){
       response.status(this.responseService.status).send(this.responseService);
     } else {
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(this.responseService);
+    }
+
+  }
+
+
+  @Put('/:id')
+  @UseInterceptors(FileInterceptor('cover'))
+  private async Update(@Req() request: Request, @Res() response: Response, @Param('id') id: string, @Body() payload: Book, @UploadedFile() cover: Express.Multer.File) {
+
+    try {
+      
+      const model: any = await this.connectionProvider.getModel('visualizar', this.bookSchema.name, this.bookSchema);
+      const userModel = await this.connectionProvider.getModel('visualizar', this.userSchema.name, this.userSchema);
+      const id = request.params.id;
+    
+      const userAggregtions = {
+        match: { 
+          //operationType: {$ne: 'D'},
+          email: process.env.ADMIN_USER
+        },
+        limit: 1,
+        skip: 0
+      }
+      const adminResponse = await this.bookService.getAll(userModel, userAggregtions);
+
+      if(Object.keys(adminResponse.result).length > 0){
+        if(cover){
+          const file: any = await this.awsService.upload(cover);
+          if(file.Location){
+            payload.cover = file.Location;
+          }
+        }
+
+        payload.operationType = 'U'
+        const updateResponse = await this.bookService.update(model, id, payload, adminResponse.result._id);
+        if(Object.keys(updateResponse.result).length > 0){
+          this.responseService = {
+            result: updateResponse.result,
+            status: HttpStatus.OK,
+            message: updateResponse.message,
+            error: updateResponse.error,
+          }
+        }else{
+          this.responseService = {
+            result: updateResponse.result,
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: updateResponse.message,
+            error: updateResponse.error,
+          }
+        }
+      }else {
+        this.responseService = {
+          result: adminResponse.result,
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: adminResponse.message,
+          error: adminResponse.error,
+        }
+      }
+
+    } catch (error) {
+      this.responseService = {
+        result: null,
+        status: HttpStatus.NOT_FOUND,
+        message: error.message,
+        error: error,
+      }
+    }
+
+    if(this.responseService.status){
+      response.status(this.responseService.status).send(this.responseService);
+    }else{
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(this.responseService);
     }
 
