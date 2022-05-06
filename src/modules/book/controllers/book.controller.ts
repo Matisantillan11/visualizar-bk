@@ -142,15 +142,14 @@ export class BookController {
       } else {
         this.responseService = {
           result: null,
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: '',
-          error: 'Book cannot be created.'
+          status: HttpStatus.NOT_FOUND,
+          message: adminResponse.message,
+          error: adminResponse.error
         }
       }
 
     }catch(error){
       console.log(error)
-
       this.responseService = {
         result: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -216,7 +215,7 @@ export class BookController {
       }else {
         this.responseService = {
           result: adminResponse.result,
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          status: HttpStatus.NOT_FOUND,
           message: adminResponse.message,
           error: adminResponse.error,
         }
@@ -225,7 +224,7 @@ export class BookController {
     } catch (error) {
       this.responseService = {
         result: null,
-        status: HttpStatus.NOT_FOUND,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
         message: error.message,
         error: error,
       }
@@ -237,6 +236,88 @@ export class BookController {
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(this.responseService);
     }
 
+  }
+
+  @Delete('/:id')
+  private async Delete(@Req() request: Request, @Res() response: Response, @Param('id') id: string) {
+    try {
+      
+      const model: any = await this.connectionProvider.getModel('visualizar', this.bookSchema.name, this.bookSchema);
+      const userModel = await this.connectionProvider.getModel('visualizar', this.userSchema.name, this.userSchema);
+      const id = request.params.id;
+
+      const aggregations = {
+        match: { 
+          operationType: {$ne: 'D'},
+          _id: { $oid: id }
+        },
+        limit: 1,
+        skip: 0
+      }
+      const payload = await this.bookService.getAll(model, aggregations)
+    
+      if(Object.keys(payload.result).length > 0){
+
+        const userAggregtions = {
+          match: { 
+            //operationType: {$ne: 'D'},
+            email: process.env.ADMIN_USER
+          },
+          limit: 1,
+          skip: 0
+        }
+        const adminResponse = await this.bookService.getAll(userModel, userAggregtions);
+  
+        if(Object.keys(adminResponse.result).length > 0){
+          
+          payload.result.operationType = 'D'
+          const deleteResponse = await this.bookService.update(model, id, payload.result, adminResponse.result._id);
+          if(Object.keys(deleteResponse.result).length > 0){
+            this.responseService = {
+              result: deleteResponse.result,
+              status: HttpStatus.OK,
+              message: deleteResponse.message,
+              error: deleteResponse.error,
+            }
+          }else{
+            this.responseService = {
+              result: deleteResponse.result,
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+              message: deleteResponse.message,
+              error: deleteResponse.error,
+            }
+          }
+        }else {
+          this.responseService = {
+            result: adminResponse.result,
+            status: HttpStatus.NOT_FOUND,
+            message: adminResponse.message,
+            error: adminResponse.error,
+          }
+        }
+      }else{
+        this.responseService = {
+          result: payload.result,
+          status: HttpStatus.NOT_FOUND,
+          message: payload.message,
+          error: payload.error,
+        }
+      }
+
+    } catch (error) {
+      this.responseService = {
+        result: null,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error.message,
+        error: error,
+      }
+    }
+
+    if(this.responseService.status){
+      response.status(this.responseService.status).send(this.responseService);
+    }else{
+      response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(this.responseService);
+    }
   }
   
 }
