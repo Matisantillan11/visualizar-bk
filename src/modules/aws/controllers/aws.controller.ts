@@ -1,7 +1,7 @@
-import { Controller, HttpStatus, Inject, Res } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Inject, Res } from '@nestjs/common';
 import { Post, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import Responseable from 'src/utils/Ports/Responseable';
 import { AwsService } from '../providers/aws.service';
 
@@ -12,6 +12,9 @@ export class AwsController {
 
   constructor(private readonly awsService: AwsService) {}
 
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({status: HttpStatus.CREATED, description: 'Record has been created successfully.'})
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception. Not created'})
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   private async upload(@UploadedFile() file, @Res() response) {
