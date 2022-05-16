@@ -4,12 +4,14 @@ import { Request, Response } from 'express';
 import { AuthenticationService } from '../authentication.service';
 import { ConnectionProvider } from 'src/application/database/connectionProvider.service';
 
-import User from 'src/modules/user/dto/user.dto';
+import { UserDTO } from 'src/modules/user/dto/user.dto';
 import UserSchema from 'src/modules/user/schemas/user.model';
 import Registrable from 'src/utils/Ports/Registrable';
 import Responseable from 'src/utils/Ports/Responseable';
 import Logueable from 'src/utils/Ports/Logueable';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthenticationController {
   private readonly userSchema: any;
@@ -143,38 +145,19 @@ export class AuthenticationController {
         );
         const loginResponse = await this.authenticationService.login(logInData, database, model, model);
 
-        if (loginResponse.result !== undefined) {
+        if (Object.keys(loginResponse.result).length > 0) {
           this.responseService = {
             result: loginResponse.result,
             message: loginResponse.message,
             status: loginResponse.status,
             error: loginResponse.error,
           };
-          /* if (res.status == 200) {
-  
-            await this.sessionBuilder.getInstance([sessionModel, res.result.user._id])
-              .then((responseBuilder: DomainResponseable) => {
-  
-                if (responseBuilder && responseBuilder !== undefined) {
-                  if (responseBuilder.status === 200) {
-  
-                    this.session = responseBuilder.result
-                    this.responserService.res.result.session = this.session
-  
-                  } else {
-                    this.responserService.res = { result: res.result, message: res.message, status: res.status, error: res.error }
-                  }
-                } else {
-                  this.responserService.res = { result: 'Nop', message: 'La capa superior contesto undefined', error: '', status: 500 }
-                }
-              })
-          } */
         } else {
           this.responseService = {
-            result: 'Nop',
-            message: 'La capa superior contesto undefined',
-            error: '',
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            result: loginResponse.result,
+            message: loginResponse.message,
+            status: loginResponse.status,
+            error: loginResponse.error,
           };
         }
       } catch (error) {

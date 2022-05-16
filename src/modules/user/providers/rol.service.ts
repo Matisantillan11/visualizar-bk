@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model, Document } from 'mongoose';
-import Rol from 'src/modules/user/dto/rol.dto';
+import { RolDTO } from 'src/modules/user/dto/rol.dto';
 
 //services
 import { AppService } from 'src/app.service';
@@ -14,11 +14,11 @@ export class RolService {
     return this.utilService.getAll(model, aggregations);
   }
 
-  create(model: Model<Document, {}>, data: Rol, idUser: string): Promise<Responseable> {
+  create(model: Model<Document, {}>, data: RolDTO, idUser: string): Promise<Responseable> {
     return this.utilService.save(data, model, model, idUser);
   }
 
-  update(id: string, data: Rol, model: Model<Document, {}>, userId: string): Promise<Responseable> {
+  update(id: string, data: RolDTO, model: Model<Document, {}>, userId: string): Promise<Responseable> {
     return this.utilService.update(id, data, model, model, userId);
   }
 }

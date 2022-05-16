@@ -16,10 +16,12 @@ import { ConnectionProvider } from 'src/application/database/connectionProvider.
 
 import Responseable from 'src/utils/Ports/Responseable';
 
-import Rol from 'src/modules/user/dto/rol.dto';
+import { RolDTO } from 'src/modules/user/dto/rol.dto';
 import RolSchema from 'src/modules/user/schemas/rol.model';
 import { RolService } from 'src/modules/user/providers/rol.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Rols')
 @Controller('rol')
 export class RolController {
   private readonly rolSchema: any;
@@ -89,7 +91,7 @@ export class RolController {
   }
 
   @Post()
-  async createOne(@Body() payload: Rol) {
+  async createOne(@Body() payload: RolDTO) {
     const model: any = await this.connectionProvider.getModel('goodforlife', this.rolSchema.name, this.rolSchema);
     return this.rolService.create(model, payload, '61f9d64e2009201a81607470');
   }
@@ -98,7 +100,7 @@ export class RolController {
   async deleteOne(@Res() response: Response, @Req() request: Request, @Param('id') id: string) {
     try {
       const model: any = await this.connectionProvider.getModel('goodforlife', this.rolSchema.name, this.rolSchema);
-      let obj: Rol;
+      let obj: RolDTO;
 
       const match = {
         operationType: { $ne: 'D' },

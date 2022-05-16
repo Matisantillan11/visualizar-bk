@@ -15,14 +15,16 @@ import {
 import { Request, Response } from 'express';
 import { ConnectionProvider } from 'src/application/database/connectionProvider.service';
 
-import User from 'src/modules/user/dto/user.dto';
+import { UserDTO } from 'src/modules/user/dto/user.dto';
 import UserSchema from 'src/modules/user/schemas/user.model';
 
 import Responseable from 'src/utils/Ports/Responseable';
 
 //services
 import { UserService } from 'src/modules/user/providers/user.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('user')
 export class UserController {
   private readonly userSchema: any;
@@ -92,7 +94,7 @@ export class UserController {
   }
 
   @Post()
-  async createOne(@Body() payload: User) {
+  async createOne(@Body() payload: UserDTO) {
     const model: any = await this.connectionProvider.getModel('goodforlife', this.userSchema.name, this.userSchema);
     return this.userService.create(model, payload, '61f9d64e2009201a81607470');
   }
@@ -101,7 +103,7 @@ export class UserController {
   async deleteOne(@Res() response: Response, @Req() request: Request, @Param('id') id: string) {
     try {
       const model: any = await this.connectionProvider.getModel('goodforlife', this.userSchema.name, this.userSchema);
-      let obj: User;
+      let obj: UserDTO;
 
       const match = {
         operationType: { $ne: 'D' },

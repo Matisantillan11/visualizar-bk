@@ -112,24 +112,31 @@ export class AuthenticationService implements Authenticable {
               };
             } else {
               responserService = {
-                result: [],
+                result: {},
                 message: `El usuario ${loginData.email} no se encuentra habilitado.`,
                 error: '',
-                status: 404,
+                status: 401,
               };
             }
           } else {
             responserService = {
-              result: [],
+              result: {},
               message: 'No se pudo iniciar sesión. Credenciales inválidas',
               error: '',
-              status: 404,
+              status: 401,
             };
           }
+        } else{
+          responserService = {
+            result: {},
+            message: `No se encontro el usuario con el correo ${loginData.email}`,
+            error: '',
+            status: 404,
+          };
         }
       } else {
         responserService = {
-          result: [],
+          result: {},
           message: `El correo ${loginData.email} no se encuetra registrado`,
           error: '',
           status: 404,

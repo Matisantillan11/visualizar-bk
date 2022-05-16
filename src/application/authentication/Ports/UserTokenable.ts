@@ -1,7 +1,7 @@
-import User from 'src/modules/user/dto/user.dto';
+import { UserDTO } from 'src/modules/user/dto/user.dto';
 import Tokenizable from './Tokenizable';
 
 export default interface UserTokenable {
-  user: User;
+  user: UserDTO;
   token: Tokenizable;
 }

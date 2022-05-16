@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { hash, compare } from 'bcryptjs';
 
 import Responseable from 'src/utils/Ports/Responseable';
-import User from 'src/modules/user/dto/user.dto';
+import { UserDTO } from 'src/modules/user/dto/user.dto';
 import ObjInterface from 'src/modules/user/interfaces/user.interface';
 
 //services
