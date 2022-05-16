@@ -30,4 +30,8 @@ export const Config = {
     user: [UserController, RolController],
     book: [BookController],
   },
+  excludedRoutes: {
+    path: '(.*)/withoutAuth/(.*)',
+    authPath: '/auth/(.*)'
+  }
 };
