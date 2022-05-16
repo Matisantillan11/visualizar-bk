@@ -9,3 +9,32 @@ export class RolDTO extends DtoUtil implements Interface {
   @IsNotEmpty()
   public name: string;
 }
+
+export class RolSuccessfully {
+  @ApiProperty({type: RolDTO})
+  public result: RolDTO;
+
+  @ApiProperty()
+  message: string
+
+  @ApiProperty({ example: false})
+  error: boolean
+
+  @ApiProperty({ example: 200})
+  status: number
+}
+
+
+export class RolError {
+  @ApiProperty()
+  public result: {};
+
+  @ApiProperty()
+  message: string
+
+  @ApiProperty({ example: true})
+  error: boolean
+
+  @ApiProperty()
+  status: number
+}

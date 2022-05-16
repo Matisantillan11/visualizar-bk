@@ -15,14 +15,15 @@ import {
 import { Request, Response } from 'express';
 import { ConnectionProvider } from 'src/application/database/connectionProvider.service';
 
-import { UserDTO } from 'src/modules/user/dto/user.dto';
+import { UserDTO, UserError, UserSuccessfully } from 'src/modules/user/dto/user.dto';
 import UserSchema from 'src/modules/user/schemas/user.model';
 
 import Responseable from 'src/utils/Ports/Responseable';
 
 //services
 import { UserService } from 'src/modules/user/providers/user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 
 @ApiTags('Users')
 @Controller('user')
@@ -37,6 +38,12 @@ export class UserController {
     this.userSchema = new UserSchema();
   }
 
+  @ApiQuery({name: 'aggregations',required: false,description: 'Query param used to add query functions of MongoDB like Match, Project, Sort, Group, Limit and Skip'})
+  @ApiParam({ name: 'db', required: true, description: 'Param used like reference to database to be connected.' })
+  @ApiConsumes('application/json')
+  @ApiResponse({ status: HttpStatus.OK, description: 'Records has been obtained successfully.', type: UserSuccessfully})
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Records has not been found.', type: UserError})
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception.', type: UserError })
   @Get('/withoutAuth/:db')
   private async getAllWithoutAuth(@Res() response: Response, @Req() request: Request, @Param('db') db: string) {
     try {
@@ -93,12 +100,21 @@ export class UserController {
     /* return this.userService.getOne(name); */
   }
 
+  @ApiConsumes('application/json')
+  @ApiResponse({status: HttpStatus.CREATED, description: 'Record has been created successfully.', type: UserSuccessfully})
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Admin user has not been found. Not created.', type: UserError})
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception. Not created', type: UserError})
   @Post()
   async createOne(@Body() payload: UserDTO) {
     const model: any = await this.connectionProvider.getModel('goodforlife', this.userSchema.name, this.userSchema);
     return this.userService.create(model, payload, '61f9d64e2009201a81607470');
   }
 
+  @ApiParam({ name: 'id', required: true, description: 'Param used like reference to object to be deleted.' })
+  @ApiConsumes('application/json')
+  @ApiResponse({status: HttpStatus.OK,description: 'Record has been deleted successfully.',type: UserSuccessfully})
+  @ApiResponse({status: HttpStatus.NOT_FOUND,description: 'Record has not been found. Not deleted.',type: UserError})
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR,description: 'Unhandled exception. Not deleted',type: UserError})
   @Delete('/:id')
   async deleteOne(@Res() response: Response, @Req() request: Request, @Param('id') id: string) {
     try {

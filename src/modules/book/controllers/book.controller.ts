@@ -103,7 +103,7 @@ export class BookController {
 
   @ApiConsumes('application/json')
   @ApiConsumes('application/json', 'multipart/form-data')
-  @ApiResponse({status: HttpStatus.OK, description: 'Record has been created successfully.', type: BookSuccessfully})
+  @ApiResponse({status: HttpStatus.CREATED, description: 'Record has been created successfully.', type: BookSuccessfully})
   @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Admin user has not been found. Not created.', type: BookError})
   @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception. Not created', type: BookError})
   @Post()

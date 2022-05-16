@@ -3,6 +3,7 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Schema } from 'mongoose';
 import Interface from 'src/modules/user/interfaces/user.interface';
 import DtoUtil from 'src/utils/dto';
+import { RolDTO } from './rol.dto';
 
 export class UserDTO extends DtoUtil implements Interface {
   @ApiProperty()
@@ -10,6 +11,7 @@ export class UserDTO extends DtoUtil implements Interface {
   @IsNotEmpty()
   public name: string;
 
+  @ApiProperty({type: RolDTO})
   public rol: Schema.Types.ObjectId;
 
   @ApiProperty()
@@ -37,4 +39,32 @@ export class UserDTO extends DtoUtil implements Interface {
 
   @ApiProperty()
   public enabled: boolean;
+}
+
+export class UserSuccessfully {
+  @ApiProperty({ type: UserDTO })
+  public result: UserDTO;
+
+  @ApiProperty()
+  message: string
+
+  @ApiProperty({ example: false})
+  error: boolean
+
+  @ApiProperty({ example: 200})
+  status: number
+}
+
+export class UserError {
+  @ApiProperty()
+  public result: {};
+
+  @ApiProperty()
+  message: string
+
+  @ApiProperty({ example: true})
+  error: boolean
+
+  @ApiProperty()
+  status: number
 }
