@@ -25,8 +25,8 @@ import UserSchema from 'src/modules/user/schemas/user.model';
 import Responseable from 'src/utils/Ports/Responseable';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AwsService } from 'src/modules/aws/providers/aws.service';
-import { ApiTags } from '@nestjs/swagger';
-import { BookDTO } from '../dto/book.dto';
+import { ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { BookDTO, BookError, BookSuccessfully } from '../dto/book.dto';
 
 @ApiTags('Books')
 @Controller('book')
@@ -44,6 +44,12 @@ export class BookController {
     this.userSchema = new UserSchema();
   }
 
+  @ApiQuery({name: 'aggregations',required: false,description: 'Query param used to add query functions of MongoDB like Match, Project, Sort, Group, Limit and Skip'})
+  @ApiParam({ name: 'db', required: true, description: 'Param used like reference to database to be connected.' })
+  @ApiConsumes('application/json')
+  @ApiResponse({ status: HttpStatus.OK, description: 'Records has been obtained successfully.', type: BookSuccessfully})
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Records has not been found.', type: BookError})
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception.', type: BookError })
   @Get('/withoutAuth/:db')
   private async getAllWithouthAuth(@Res() response: Response, @Req() request: Request, @Param('db') db: string) {
     try {
@@ -72,7 +78,7 @@ export class BookController {
       } else {
         this.responseService = {
           result: bookResponse.result,
-          status: HttpStatus.OK,
+          status: HttpStatus.NOT_FOUND,
           message: bookResponse.message,
           error: bookResponse.error,
         };
@@ -95,6 +101,11 @@ export class BookController {
     }
   }
 
+  @ApiConsumes('application/json')
+  @ApiConsumes('application/json', 'multipart/form-data')
+  @ApiResponse({status: HttpStatus.OK, description: 'Record has been created successfully.', type: BookSuccessfully})
+  @ApiResponse({status: HttpStatus.NOT_FOUND, description: 'Admin user has not been found. Not created.', type: BookError})
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception. Not created', type: BookError})
   @Post()
   @UseInterceptors(FileInterceptor('cover'))
   private async create(
@@ -164,6 +175,12 @@ export class BookController {
     }
   }
 
+  @ApiParam({ name: 'id', required: true, description: 'Param used like reference to object to be updated.' })
+  @ApiConsumes('application/json', 'multipart/form-data')
+  @ApiBody({ type: BookDTO, required: true })
+  @ApiResponse({status: HttpStatus.OK,description: 'Record has been updated successfully.',type: BookSuccessfully})
+  @ApiResponse({status: HttpStatus.NOT_FOUND,description: 'Record has not been found. Not updated.',type: BookError})
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR,description: 'Unhandled exception. Not updated',type: BookError})
   @Put('/:id')
   @UseInterceptors(FileInterceptor('cover'))
   private async Update(
@@ -237,6 +254,11 @@ export class BookController {
     }
   }
 
+  @ApiParam({ name: 'id', required: true, description: 'Param used like reference to object to be deleted.' })
+  @ApiConsumes('application/json')
+  @ApiResponse({status: HttpStatus.OK,description: 'Record has been deleted successfully.',type: BookSuccessfully})
+  @ApiResponse({status: HttpStatus.NOT_FOUND,description: 'Record has not been found. Not deleted.',type: BookError})
+  @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR,description: 'Unhandled exception. Not deleted',type: BookError})
   @Delete('/:id')
   private async Delete(@Req() request: Request, @Res() response: Response, @Param('id') id: string) {
     try {
