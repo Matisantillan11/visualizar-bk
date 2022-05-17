@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 import Schemable from 'src/utils/model';
 
-export const entity: string = 'book';
+export const entity: string = 'course';
 export const model = {
   name: {
     type: String,

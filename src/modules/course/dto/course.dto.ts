@@ -13,7 +13,7 @@ export class Course extends DtoUtil implements CourseInterface {
 }
 
 export class CourseSuccess {
-  @ApiProperty({ type: Course})
+  @ApiProperty({ type: Course })
   public result: Course
   @ApiProperty()
   public message: string
@@ -22,6 +22,7 @@ export class CourseSuccess {
   @ApiProperty({ example: HttpStatus.CREATED})
   public status: number
 }
+
 
 export class CourseError {
   @ApiProperty()
