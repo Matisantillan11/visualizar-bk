@@ -9,6 +9,7 @@ import { AuthenticationModule } from './application/authentication/authenticatio
 import { BookModule } from './modules/book/book.module';
 import { AwsModule } from './modules/aws/aws.module';
 import { Authentication } from './modules/middlewares/authenticate.middleware';
+import { CourseModule } from './modules/course/course.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { Authentication } from './modules/middlewares/authenticate.middleware';
     AuthenticationModule,
     EmailModule,
     UserModule,
-    BookModule
+    BookModule,
+    CourseModule
   ],
   controllers: Config.controllers.app,
   providers: Config.services.app,
