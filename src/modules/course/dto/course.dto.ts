@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Schema } from 'mongoose'
 import CourseInterface from 'src/modules/course/interfaces/course.interface';
 import { UserDTO } from 'src/modules/user/dto/user.dto';
@@ -12,6 +12,7 @@ export class Course extends DtoUtil implements CourseInterface {
   public teacher: Schema.Types.ObjectId;
 }
 
+export class CoursePartial extends PartialType(Course){}
 export class CourseSuccess {
   @ApiProperty({ type: Course })
   public result: Course
