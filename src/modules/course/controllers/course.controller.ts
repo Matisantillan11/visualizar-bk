@@ -1,6 +1,6 @@
 import { Model, Document } from 'mongoose'
 import { ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Get, HttpStatus, Inject, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { ConnectionProvider } from 'src/application/database/connectionProvider.service';
 
 import { CourseService } from '../providers/course.service';
@@ -150,6 +150,7 @@ export class CourseController {
 
   @ApiConsumes('application/json')
   @ApiParam({ name: 'id', description: 'Course identificator', required: true})
+  @ApiBody({ type: CoursePartial})
   @ApiResponse({ status: HttpStatus.OK, description: 'Course updated successfully', type: CourseSuccess})
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User unauthorized', type: CourseError})
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Course not found', type: CourseError})
@@ -165,7 +166,84 @@ export class CourseController {
         const model: Model<Document, {}> = await this.connectionProvider.getModel(database, this.courseSchema.name, this.courseSchema)
         if(Object.keys(payload).length > 0){
           const getResponse = await this.courseService.getAll(model, { match: { operationType: { $ne: 'D'}, _id: { $oid: id}}, limit: 1, skip: 0})
-          if(Object.keys(getResponse).length > 0){
+          if(Object.keys(getResponse.result).length > 0){
+            const updateResponse = await this.courseService.update(model, id, payload, userId)
+            if(Object.keys(updateResponse.result).length > 0){
+              this.responseService = {
+                result: updateResponse.result,
+                message: updateResponse.message,
+                error: false,
+                status: HttpStatus.OK
+              }
+            }else{
+              this.responseService = {
+                result: updateResponse.result,
+                message: updateResponse.message,
+                error: true,
+                status: HttpStatus.CONFLICT
+              }
+            }
+          }else{
+            this.responseService = {
+              result: {},
+              message: 'Course not found. Cannot update',
+              error: true,
+              status: HttpStatus.NOT_FOUND
+            }
+          }
+        }else{
+          this.responseService = {
+            result: {},
+            message: 'Missing required data',
+            error: true,
+            status: HttpStatus.BAD_REQUEST
+          }
+        }
+
+      }else{
+        this.responseService = {
+          result: {},
+          message: 'Unhauthorized',
+          error: true,
+          status: HttpStatus.UNAUTHORIZED
+        }
+      }
+    } catch (error) {
+      this.responseService = {
+        result: {},
+        message: error.message,
+        error: true,
+        status: HttpStatus.INTERNAL_SERVER_ERROR
+      }
+    }
+
+    if(this.responseService.status){
+      res.status(this.responseService.status).send(this.responseService)
+    } else{
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(this.responseService)
+    }
+  }
+
+  @ApiConsumes('application/json')
+  @ApiParam({ name: 'id', description: 'Course identificator', required: true})
+  @ApiResponse({ status: HttpStatus.OK, description: 'Course deleted successfully', type: CourseSuccess})
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User unauthorized', type: CourseError})
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Course not found', type: CourseError})
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Course cannot be deleted', type: CourseError})
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception', type: CourseError})
+  @Delete('/:id')
+  private async delete(@Req() req: RequestAuthenticate, @Param('id') id: string, @Res() res: Response){
+    try {
+      const database = req.database
+      const userId = req.user._id
+
+      if(database){
+        const model: Model<Document, {}> = await this.connectionProvider.getModel(database, this.courseSchema.name, this.courseSchema)
+        if(id){
+          const getResponse = await this.courseService.getAll(model, { match: { operationType: { $ne: 'D'}, _id: { $oid: id}}, limit: 1, skip: 0})
+          if(Object.keys(getResponse.result).length > 0){
+            const payload: Course = getResponse.result
+            payload.operationType = 'D'
             const updateResponse = await this.courseService.update(model, id, payload, userId)
             if(Object.keys(updateResponse.result).length > 0){
               this.responseService = {
