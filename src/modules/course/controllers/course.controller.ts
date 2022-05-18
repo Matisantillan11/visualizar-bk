@@ -92,7 +92,7 @@ export class CourseController {
 
 
   @ApiConsumes('application/json')
-  @ApiBody({ type: Course})
+  @ApiBody({ type: Course, required: true})
   @ApiResponse({status: HttpStatus.CREATED, description: 'Course created successfully', type: CourseSuccess})
   @ApiResponse({status: HttpStatus.UNAUTHORIZED, description: 'User unauthorized', type: CourseError})
   @ApiResponse({status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Unhandled exception', type: CourseError})
@@ -150,7 +150,7 @@ export class CourseController {
 
   @ApiConsumes('application/json')
   @ApiParam({ name: 'id', description: 'Course identificator', required: true})
-  @ApiBody({ type: CoursePartial})
+  @ApiBody({ type: CoursePartial, required: true})
   @ApiResponse({ status: HttpStatus.OK, description: 'Course updated successfully', type: CourseSuccess})
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User unauthorized', type: CourseError})
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Course not found', type: CourseError})
