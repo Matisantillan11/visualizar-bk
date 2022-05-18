@@ -10,6 +10,8 @@ import { AwsService } from 'src/modules/aws/providers/aws.service';
 import { AwsController } from 'src/modules/aws/controllers/aws.controller';
 import { CourseService } from './modules/course/providers/course.service';
 import { CourseController } from './modules/course/controllers/course.controller';
+//newserviceimport
+//newcontrollerimport
 
 export const Config = {
   enviroment: {
@@ -25,14 +27,16 @@ export const Config = {
     aws: [AppService, AwsService],
     user: [AppService, UserService, RolService, BookService],
     book: [AppService, AwsService, BookService],
-    course: [AppService, CourseService, UserService]
+    course: [AppService, CourseService, UserService],  
+		//newService
   },
   controllers: {
     app: [AppController],
     aws: [AwsController],
     user: [UserController, RolController],
     book: [BookController],
-    course:[CourseController]
+    course:[CourseController],
+		//newController
   },
   excludedRoutes: {
     path: '(.*)/withoutAuth/(.*)',
